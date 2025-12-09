@@ -1,4 +1,4 @@
-import { theme } from "@/constants/theme.design";
+import { theme } from "@/src/theme";
 import { useAuth } from "@clerk/clerk-expo";
 import { Redirect, Stack } from "expo-router";
 import { useEffect } from "react";
