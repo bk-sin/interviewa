@@ -15,19 +15,21 @@ import {
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import "react-native-reanimated";
+import { Provider as ReduxProvider } from "react-redux";
 
-import { theme } from "@/constants/theme.design";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { preloadImages } from "@/utils/asset-loader";
+import { useColorScheme } from "@/src/hooks";
+import { preloadImages } from "@/src/lib/assets";
+import { store } from "@/src/store";
+import { theme } from "@/src/theme";
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
 if (__DEV__) {
-  import("../reactotron-config").then(() =>
+  import("@/src/config/reactotron.config").then(() =>
     console.log("Reactotron Configured")
   );
 }
@@ -46,6 +48,7 @@ if (!publishableKey) {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === "dark";
   const [assetsLoaded, setAssetsLoaded] = useState(false);
 
   const [fontsLoaded] = useFonts({
@@ -54,6 +57,36 @@ export default function RootLayout() {
     Inter_600SemiBold,
     Inter_700Bold,
   });
+
+  const navigationTheme = useMemo(() => {
+    if (isDarkMode) {
+      return {
+        ...DarkTheme,
+        colors: {
+          ...DarkTheme.colors,
+          background: theme.colors.background.dark,
+          card: theme.colors.background.card,
+          text: theme.colors.text.primary,
+          border: theme.colors.border.dark,
+          primary: theme.colors.primary,
+        },
+      };
+    }
+
+    return {
+      ...DefaultTheme,
+      colors: {
+        ...DefaultTheme.colors,
+        background: theme.colors.background.light,
+        card: theme.colors.background.light,
+        text: theme.colors.text.dark,
+        border: theme.colors.border.light,
+        primary: theme.colors.primary,
+      },
+    };
+  }, [isDarkMode]);
+
+  const backgroundColor = navigationTheme.colors.background;
 
   // Pre-cache critical images
   useEffect(() => {
@@ -88,61 +121,44 @@ export default function RootLayout() {
     );
   }
 
-  // Custom dark theme with our background color
-  const customDarkTheme = {
-    ...DarkTheme,
-    colors: {
-      ...DarkTheme.colors,
-      background: theme.colors.background.dark,
-      card: theme.colors.background.card,
-    },
-  };
-
   return (
-    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <ThemeProvider
-        value={colorScheme === "dark" ? customDarkTheme : DefaultTheme}
-      >
-        <View
-          style={{ flex: 1, backgroundColor: theme.colors.background.dark }}
-        >
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: theme.colors.background.dark },
-              animation: "fade",
-              gestureEnabled: false, // Prevent swipe back
-            }}
-          >
-            <Stack.Screen
-              name="onboarding"
-              options={{
+    <ReduxProvider store={store}>
+      <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+        <ThemeProvider value={navigationTheme}>
+          <View style={{ flex: 1, backgroundColor }}>
+            <Stack
+              screenOptions={{
                 headerShown: false,
-                gestureEnabled: false,
+                contentStyle: { backgroundColor },
+                animation: "fade",
               }}
-            />
-            <Stack.Screen
-              name="(auth)"
-              options={{
-                headerShown: false,
-                gestureEnabled: false,
-              }}
-            />
-            <Stack.Screen
-              name="(tabs)"
-              options={{
-                headerShown: false,
-                gestureEnabled: false,
-              }}
-            />
-            <Stack.Screen
-              name="modal"
-              options={{ presentation: "modal", title: "Modal" }}
-            />
-          </Stack>
-          <StatusBar style="light" />
-        </View>
-      </ThemeProvider>
-    </ClerkProvider>
+            >
+              <Stack.Screen
+                name="onboarding"
+                options={{
+                  headerShown: false,
+                  gestureEnabled: false,
+                }}
+              />
+              <Stack.Screen
+                name="(auth)"
+                options={{
+                  headerShown: false,
+                  gestureEnabled: false,
+                }}
+              />
+              <Stack.Screen
+                name="(tabs)"
+                options={{
+                  headerShown: false,
+                  gestureEnabled: false,
+                }}
+              />
+            </Stack>
+            <StatusBar style={isDarkMode ? "light" : "dark"} />
+          </View>
+        </ThemeProvider>
+      </ClerkProvider>
+    </ReduxProvider>
   );
 }
