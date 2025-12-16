@@ -27,12 +27,19 @@ export async function syncUser(
   token: string,
   additionalData?: SyncUserData
 ): Promise<void> {
-  const userData = {
+  // Build userData object, only including fields that have values
+  const userData: Record<string, any> = {
     clerkUserId,
     email,
-    name: additionalData?.name || null,
-    imageUrl: additionalData?.imageUrl || null,
   };
+
+  // Only add optional fields if they have actual values (not null/undefined)
+  if (additionalData?.name) {
+    userData.name = additionalData.name;
+  }
+  if (additionalData?.imageUrl) {
+    userData.imageUrl = additionalData.imageUrl;
+  }
 
   console.log("[UserSync] Starting sync with params:", {
     ...userData,
