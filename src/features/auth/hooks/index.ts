@@ -7,4 +7,5 @@ export { useSignInLogic } from "./use-sign-in-logic";
 export type { SignInFormData } from "./use-sign-in-logic";
 export { useSignUpLogic } from "./use-sign-up-logic";
 export type { SignUpFormData } from "./use-sign-up-logic";
+export { useUserSync } from "./use-user-sync";
 export { useWarmUpBrowser } from "./use-warm-up-browser";

@@ -11,6 +11,7 @@ import {
   MOCK_STATS_METRICS,
   MOCK_USER_STATS,
 } from "@/__mocks__/data.mock";
+import { useUserSync } from "@/src/features/auth/hooks";
 import {
   ContinueCard,
   HeroCard,
@@ -29,6 +30,9 @@ const { colors, spacing } = theme;
  * @description Main dashboard showing interview stats, quick actions and history
  */
 export default function HomeScreen() {
+  // Sync user with backend once when home loads
+  useUserSync();
+
   // Memoized handlers to prevent unnecessary re-renders
   const handleProfilePress = useCallback(() => {
     router.push("/profile");

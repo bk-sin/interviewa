@@ -1,6 +1,7 @@
 import { useClerk } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity } from "react-native";
+import { clearAuthToken } from "../services";
 
 export const SignOutButton = () => {
   const { signOut } = useClerk();
@@ -9,7 +10,7 @@ export const SignOutButton = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
-      // Reset navigation and go to onboarding
+      clearAuthToken();
       router.replace("/onboarding");
     } catch (err) {
       console.error(JSON.stringify(err, null, 2));
