@@ -319,9 +319,7 @@ export default function InterviewScreen() {
           {transcript && (
             <View style={styles.transcriptionContainer}>
               <Text style={styles.transcriptionLabel}>Transcripción:</Text>
-              <Text style={styles.transcriptionText}>
-                {transcript}
-              </Text>
+              <Text style={styles.transcriptionText}>{transcript}</Text>
             </View>
           )}
         </View>
@@ -351,8 +349,7 @@ export default function InterviewScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // Asegúrate de que theme.colors.background.dark exista, si no usa '#10221c'
-    backgroundColor: theme.colors.background?.dark || "#10221c",
+    backgroundColor: theme.colors.background.dark,
   },
   mainContent: {
     flex: 1,

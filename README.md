@@ -25,6 +25,25 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+## 🚀 Code Generation
+
+This project uses Plop for automated code generation following our architecture patterns:
+
+```bash
+npm run plop          # Interactive mode
+npm run plop feature  # Create new feature
+npm run plop component # Create component
+```
+
+See [PLOP.md](./PLOP.md) for detailed documentation.
+
+## 📐 Architecture
+
+This project follows a **feature-based architecture**. See:
+
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - Detailed architecture documentation
+- [.github/copilot-instructions.md](./.github/copilot-instructions.md) - AI coding agent guidelines
+
 ## Get a fresh project
 
 When you're ready, run:

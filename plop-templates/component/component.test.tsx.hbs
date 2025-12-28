@@ -1,0 +1,32 @@
+import { render } from "@testing-library/react-native";
+import React from "react";
+import { {{pascalCase name}} } from "../{{dashCase name}}";
+
+describe("{{pascalCase name}}", () => {
+  const defaultProps = {
+    // Add default props
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe("Rendering", () => {
+    it("should render correctly", () => {
+      const { getByText } = render(<{{pascalCase name}} {...defaultProps} />);
+      expect(getByText("{{pascalCase name}} Component")).toBeTruthy();
+    });
+  });
+
+  describe("Accessibility", () => {
+    it("should be accessible", () => {
+      const { getByText } = render(<{{pascalCase name}} {...defaultProps} />);
+      const component = getByText("{{pascalCase name}} Component");
+      expect(component).toBeTruthy();
+    });
+  });
+
+  describe("Edge Cases", () => {
+    // Add edge case tests
+  });
+});
