@@ -57,11 +57,58 @@ export type InterviewStatus =
   | "cancelled";
 export type InterviewDifficulty = "easy" | "medium" | "hard";
 
+// Estados de la entrevista según backend
+export type InterviewState = 
+  | "INTRO"
+  | "QUESTION"
+  | "RECORDING"
+  | "PROCESSING"
+  | "MICRO_FEEDBACK"
+  | "CHECKPOINT"
+  | "FOLLOW_UP"
+  | "FINAL"
+  | "PAUSED"
+  | "ERROR";
+
+// Categorías de preguntas
+export type QuestionCategory = 
+  | "TECHNICAL"
+  | "BEHAVIORAL"
+  | "PROBLEM_SOLVING"
+  | "COMMUNICATION"
+  | "LEADERSHIP";
+
 export interface InterviewQuestion {
   readonly id: string;
   readonly text: string;
-  readonly category: string;
+  readonly category: QuestionCategory;
   readonly difficulty: InterviewDifficulty;
+  readonly expectedSignals?: string[];
   readonly hints?: string[];
-  readonly expectedDuration: number; // in seconds
+  readonly estimatedDuration: number; // in seconds
+}
+
+// Payload de la sesión activa (desde backend)
+export interface InterviewSessionPayload {
+  readonly question?: InterviewQuestion;
+  readonly feedback?: InterviewFeedback;
+  readonly checkpoint?: CheckpointData;
+  readonly totalQuestions: number;
+  readonly currentQuestionIndex?: number;
+}
+
+// Checkpoint data
+export interface CheckpointData {
+  readonly summary: string;
+  readonly strengths: string[];
+  readonly improvements: string[];
+  readonly nextSteps: string[];
+}
+
+// Respuesta completa del backend
+export interface InterviewSessionResponse {
+  readonly interviewId: string;
+  readonly state: InterviewState;
+  readonly screen: string; // "QuestionScreen" | "FeedbackScreen" | "CheckpointScreen" | "FinalScreen"
+  readonly payload: InterviewSessionPayload;
 }

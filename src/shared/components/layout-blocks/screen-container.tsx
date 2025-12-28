@@ -25,7 +25,7 @@ export interface ScreenContainerProps {
   /** SafeArea edges to apply (default: top, left, right) */
   readonly edges?: ("top" | "bottom" | "left" | "right")[];
   /** StatusBar style */
-  readonly statusBarStyle?: "light-content" | "dark-content";
+  readonly statusBarStyle?: "dark-content";
   /** Test ID for testing */
   readonly testID?: string;
 }
@@ -34,7 +34,7 @@ export function ScreenContainer({
   children,
   style,
   edges = ["top", "left", "right"],
-  statusBarStyle = "light-content",
+  statusBarStyle = "dark-content",
   testID,
 }: ScreenContainerProps) {
   return (

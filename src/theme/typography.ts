@@ -59,6 +59,11 @@ export const typography = {
     fontSize: fontSizes.base,
     lineHeight: 24,
   },
+  bodySemi: {
+    fontFamily: fonts.semiBold,
+    fontSize: fontSizes.base,
+    lineHeight: 24,
+  },
   bodySmall: {
     fontFamily: fonts.regular,
     fontSize: fontSizes.sm,

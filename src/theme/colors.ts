@@ -15,6 +15,7 @@ export const colors = {
     light: "#ffffff",
     dark: "#10221c",
     card: "#1a2f28",
+    accent: "#23483c",
     input: "#f6f8f7",
   },
 

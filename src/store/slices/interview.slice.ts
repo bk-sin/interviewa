@@ -4,12 +4,18 @@ import type {
   InterviewHistoryEntry,
   InterviewRole,
   InterviewSession,
+  InterviewSessionResponse,
+  InterviewState as InterviewStateType,
   ProgressMetric,
 } from "@/src/types";
 
 interface InterviewState {
   roles: InterviewRole[];
   currentSession: InterviewSession | null;
+  
+  // Nueva data de la sesión activa (desde backend)
+  activeSession: InterviewSessionResponse | null;
+  
   history: InterviewHistoryEntry[];
   progressMetrics: ProgressMetric[];
   isLoading: boolean;
@@ -19,6 +25,7 @@ interface InterviewState {
 const initialState: InterviewState = {
   roles: [],
   currentSession: null,
+  activeSession: null,
   history: [],
   progressMetrics: [],
   isLoading: false,
@@ -38,6 +45,38 @@ const interviewSlice = createSlice({
     ) => {
       state.currentSession = action.payload;
     },
+    
+    // Nueva acción para setear la sesión activa desde el backend
+    setActiveSession: (
+      state,
+      action: PayloadAction<InterviewSessionResponse | null>
+    ) => {
+      state.activeSession = action.payload;
+    },
+    
+    // Actualizar solo el estado de la sesión
+    updateInterviewState: (
+      state,
+      action: PayloadAction<InterviewStateType>
+    ) => {
+      if (state.activeSession) {
+        state.activeSession.state = action.payload;
+      }
+    },
+    
+    // Actualizar el payload de la sesión
+    updateSessionPayload: (
+      state,
+      action: PayloadAction<Partial<InterviewSessionResponse['payload']>>
+    ) => {
+      if (state.activeSession) {
+        state.activeSession.payload = {
+          ...state.activeSession.payload,
+          ...action.payload,
+        };
+      }
+    },
+    
     setHistory: (state, action: PayloadAction<InterviewHistoryEntry[]>) => {
       state.history = action.payload;
     },
@@ -56,6 +95,7 @@ const interviewSlice = createSlice({
     },
     resetInterview: (state) => {
       state.currentSession = null;
+      state.activeSession = null;
       state.error = null;
     },
   },
@@ -64,6 +104,9 @@ const interviewSlice = createSlice({
 export const {
   setRoles,
   setCurrentSession,
+  setActiveSession,
+  updateInterviewState,
+  updateSessionPayload,
   setHistory,
   addHistoryEntry,
   setProgressMetrics,

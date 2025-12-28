@@ -5,18 +5,9 @@
 
 import { colors } from "@/src/theme";
 
-import { useColorScheme } from "./use-color-scheme";
 
-// Light/Dark color definitions
+// color definitions
 const themeColors = {
-  light: {
-    text: "#11181C",
-    background: "#fff",
-    tint: "#0a7ea4",
-    icon: "#687076",
-    tabIconDefault: "#687076",
-    tabIconSelected: "#0a7ea4",
-  },
   dark: {
     text: colors.text.primary,
     background: colors.background.dark,
@@ -27,13 +18,13 @@ const themeColors = {
   },
 } as const;
 
-type ThemeColorName = keyof typeof themeColors.light;
+type ThemeColorName = keyof typeof themeColors.dark;
 
 export function useThemeColor(
-  props: { light?: string; dark?: string },
+  props: { dark?: string },
   colorName: ThemeColorName
 ): string {
-  const theme = useColorScheme() ?? "dark";
+  const theme = "dark";
   const colorFromProps = props[theme];
 
   if (colorFromProps) {

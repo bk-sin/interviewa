@@ -7,11 +7,7 @@ import {
   Inter_700Bold,
   useFonts,
 } from "@expo-google-fonts/inter";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -20,7 +16,6 @@ import { View } from "react-native";
 import "react-native-reanimated";
 import { Provider as ReduxProvider } from "react-redux";
 
-import { useColorScheme } from "@/src/hooks";
 import { preloadImages } from "@/src/lib/assets";
 import { store } from "@/src/store";
 import { theme } from "@/src/theme";
@@ -47,8 +42,6 @@ if (!publishableKey) {
 }
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const isDarkMode = colorScheme === "dark";
   const [assetsLoaded, setAssetsLoaded] = useState(false);
 
   const [fontsLoaded] = useFonts({
@@ -59,34 +52,20 @@ export default function RootLayout() {
   });
 
   const navigationTheme = useMemo(() => {
-    if (isDarkMode) {
-      return {
-        ...DarkTheme,
-        colors: {
-          ...DarkTheme.colors,
-          background: theme.colors.background.dark,
-          card: theme.colors.background.card,
-          text: theme.colors.text.primary,
-          border: theme.colors.border.dark,
-          primary: theme.colors.primary,
-        },
-      };
-    }
-
     return {
-      ...DefaultTheme,
+      ...DarkTheme,
       colors: {
-        ...DefaultTheme.colors,
-        background: theme.colors.background.light,
-        card: theme.colors.background.light,
-        text: theme.colors.text.dark,
-        border: theme.colors.border.light,
+        ...DarkTheme.colors,
+        background: theme.colors.background.dark,
+        card: theme.colors.background.card,
+        text: theme.colors.text.primary,
+        border: theme.colors.border.dark,
         primary: theme.colors.primary,
       },
     };
-  }, [isDarkMode]);
+  }, []);
 
-  const backgroundColor = navigationTheme.colors.background;
+  const backgroundColor = theme.colors.background.dark;
 
   // Pre-cache critical images
   useEffect(() => {
@@ -155,7 +134,7 @@ export default function RootLayout() {
                 }}
               />
             </Stack>
-            <StatusBar style={isDarkMode ? "light" : "dark"} />
+            <StatusBar style="light" />
           </View>
         </ThemeProvider>
       </ClerkProvider>

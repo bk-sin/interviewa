@@ -28,7 +28,7 @@ export interface ScrollScreenProps {
   /** SafeArea edges to apply (default: top, left, right - bottom handled by tabs) */
   readonly edges?: ("top" | "bottom" | "left" | "right")[];
   /** StatusBar style */
-  readonly statusBarStyle?: "light-content" | "dark-content";
+  readonly statusBarStyle?: "dark-content";
   /** Show scroll indicator */
   readonly showsScrollIndicator?: boolean;
   /** Bottom padding for scroll content */
@@ -42,7 +42,7 @@ export function ScrollScreen({
   style,
   contentStyle,
   edges = ["top", "left", "right"],
-  statusBarStyle = "light-content",
+  statusBarStyle = "dark-content",
   showsScrollIndicator = false,
   bottomPadding = 100,
   testID,

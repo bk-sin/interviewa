@@ -1,3 +1,4 @@
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React, { memo } from "react";
 import {
   AccessibilityRole,
@@ -22,6 +23,13 @@ import { Text } from "../components/text/themed-text-inter";
 export type ButtonVariant = "primary" | "secondary" | "social" | "link";
 
 /**
+ * Valid Material Icons names
+ */
+export type MaterialIconName = React.ComponentProps<
+  typeof MaterialIcons
+>["name"];
+
+/**
  * Props interface for Button component
  */
 export interface ButtonProps {
@@ -31,8 +39,12 @@ export interface ButtonProps {
   readonly children: string;
   /** Visual variant of the button */
   readonly variant?: ButtonVariant;
-  /** Optional icon element to display before text */
+  /** Optional icon element to display before text (deprecated, use leftAccessory) */
   readonly icon?: React.ReactNode;
+  /** Optional Material Icon name to display on the left side */
+  readonly leftIcon?: MaterialIconName;
+  /** Optional Material Icon name to display on the right side */
+  readonly rightIcon?: MaterialIconName;
   /** Additional styles for the button container */
   readonly style?: ViewStyle;
   /** Whether the button is disabled */
@@ -58,6 +70,8 @@ export const Button = memo(function Button({
   children,
   variant = "primary",
   icon,
+  leftIcon,
+  rightIcon,
   style,
   disabled = false,
   fullWidth = false,
@@ -89,6 +103,17 @@ export const Button = memo(function Button({
     disabled && styles.disabledButtonText,
   ];
 
+  // Determine icon color based on variant
+  const getIconColor = () => {
+    if (disabled) return colors.text.muted;
+    if (variant === "primary") return colors.text.dark;
+    if (variant === "link") return colors.primary;
+    return colors.text.primary;
+  };
+
+  const iconColor = getIconColor();
+  const iconSize = 20;
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -102,8 +127,17 @@ export const Button = memo(function Button({
       accessibilityState={{ disabled }}
       testID={testID}
     >
+      {/* Backwards compatibility: show icon prop if provided */}
       {icon}
+      {/* Left accessory as Material Icon */}
+      {leftIcon && (
+        <MaterialIcons name={leftIcon} size={iconSize} color={iconColor} />
+      )}
       <Text style={textStyle}>{children}</Text>
+      {/* Right accessory as Material Icon */}
+      {rightIcon && (
+        <MaterialIcons name={rightIcon} size={iconSize} color={iconColor} />
+      )}
     </TouchableOpacity>
   );
 });
@@ -124,15 +158,15 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     backgroundColor: colors.primary,
-    marginTop: spacing.base,
   },
   secondaryButton: {
     backgroundColor: colors.background.card,
-    borderWidth: 1,
+    borderWidth: 0,
     borderColor: colors.border.dark,
+    elevation: 0,
   },
   socialButton: {
-    backgroundColor: "#23483c",
+    backgroundColor: colors.background.accent,
   },
   linkButton: {
     backgroundColor: "transparent",
