@@ -1,7 +1,6 @@
 import { router } from "expo-router";
 import React, { useCallback } from "react";
-import { ScrollView, StatusBar, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 import {
   MOCK_HISTORY_ENTRIES,
@@ -21,9 +20,10 @@ import {
   RolesScroller,
   StatsCard,
 } from "@/src/features/home/components";
+import { ThemedView } from "@/src/shared";
 import { theme } from "@/src/theme";
 
-const { colors, spacing } = theme;
+const { spacing } = theme;
 
 /**
  * HomeScreen
@@ -40,7 +40,7 @@ export default function HomeScreen() {
 
   const handleStartInterview = useCallback(() => {
     // TODO: Navigate to interview session
-    router.push("/interview");
+    router.push("/interview/processing");
     console.log("Start interview");
   }, []);
 
@@ -65,12 +65,7 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors.background.dark}
-      />
-
+    <ThemedView>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -119,15 +114,11 @@ export default function HomeScreen() {
           <HistoryList entries={MOCK_HISTORY_ENTRIES} />
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background.dark,
-  },
   scrollContent: {
     paddingBottom: 100,
   },

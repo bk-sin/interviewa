@@ -41,13 +41,14 @@ Screen Component → Custom Hook (use*Logic) → Service Class → Repository In
 Always use centralized theme system, never hardcoded values:
 
 ```typescript
-import { colors, spacing, typography } from "@/src/theme";
+import { colors, spacing, typography, rgba } from "@/src/theme";
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background.dark, // NOT: "#10221c"
     padding: spacing.lg, // NOT: 24
     ...typography.h1, // NOT: fontSize: 32
+    color: rgba(colors.text.primary, 0.9), // NOT: "rgba(255, 255, 255, 0.9)"
   },
 });
 ```

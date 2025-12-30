@@ -24,21 +24,22 @@ export function useProcessingLogic() {
     // 1. Configurar animaciones perpetuas
     spinValue.value = withRepeat(
       withTiming(360, { duration: 4000, easing: Easing.linear }),
-      -1 // Infinito
+      -1, // Infinito
+      false // No reverse, para que siga girando en la misma dirección
     );
 
     pulseValue.value = withRepeat(
       withSequence(
-        withTiming(1.1, { duration: 1000 }),
-        withTiming(1, { duration: 1000 })
+        withTiming(1.1, { duration: 1000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(1, { duration: 1000, easing: Easing.inOut(Easing.ease) })
       ),
       -1,
-      true // Reverse
+      false
     );
 
     pingValue.value = withRepeat(
       withSequence(
-        withTiming(1.5, { duration: 2000 }),
+        withTiming(1.5, { duration: 2000, easing: Easing.out(Easing.ease) }),
         withTiming(1, { duration: 0 }) // Reset instantáneo
       ),
       -1

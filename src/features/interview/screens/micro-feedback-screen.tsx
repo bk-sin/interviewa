@@ -1,37 +1,58 @@
+import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ScrollView, StyleSheet, View } from "react-native";
 
-import { ThemedText, ThemedView } from "@/src/shared/components";
-import { theme } from "@/src/theme";
-import { useMicroFeedbackLogic } from "../hooks";
+import { Text, ThemedView } from "@/src/shared/components";
+import { rgba, theme } from "@/src/theme";
+import { FeedbackCard, Header } from "../components";
 
-const { colors, spacing, typography } = theme;
+const { colors, spacing, typography, borderRadius } = theme;
 
 /**
  * MicroFeedbackScreen
- * @description
+ * @description Micro feedback screen for interview practice
  */
 export default function MicroFeedbackScreen() {
-  const insets = useSafeAreaInsets();
-  const { isLoading, error, handleAction } = useMicroFeedbackLogic();
-
   return (
     <ThemedView>
+      <Header
+        onBack={() => console.log("back")}
+        totalQuestions={10}
+        currentQuestion={3}
+        showProgress
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            paddingBottom: insets.bottom + 100,
-          },
-        ]}
+        contentContainerStyle={[styles.scrollContent]}
       >
-        <ThemedText style={styles.title}>MicroFeedback</ThemedText>
+        <View style={styles.headlineSection}>
+          <View style={styles.badge}>
+            <MaterialIcons
+              name="auto-awesome"
+              color={colors.primary}
+              size={16}
+            />
+            <Text style={styles.badgeText}>AI ANALYSIS</Text>
+          </View>
+          <Text style={styles.mainTitle}>How you did</Text>
+          <Text style={styles.subtitle}>
+            Here&apos;s a quick breakdown of your answer.
+          </Text>
+        </View>
 
-        {error && <ThemedText style={styles.error}>{error}</ThemedText>}
+        <View style={styles.cardsContainer}>
+          <FeedbackCard
+            type="strength"
+            title="Strong confidence & eye contact"
+            description="Great use of the STAR method to structure your response clearly."
+          />
 
-        {/* Add your UI here */}
+          <FeedbackCard
+            type="improvement"
+            title="Expand on the 'Result'"
+            description="Your answer was a bit brief. Quantify your impact to make it stronger."
+          />
+        </View>
       </ScrollView>
     </ThemedView>
   );
@@ -39,16 +60,42 @@ export default function MicroFeedbackScreen() {
 
 const styles = StyleSheet.create({
   scrollContent: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
+    padding: spacing.xl,
+    paddingTop: spacing.sm,
   },
-  title: {
+  headlineSection: {
+    alignItems: "center",
+    paddingVertical: spacing["2xl"],
+  },
+  badge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    backgroundColor: colors.primaryMuted,
+    borderColor: rgba(colors.primary, 0.2),
+    borderWidth: 1,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    marginBottom: spacing.md,
+  },
+  badgeText: {
+    color: colors.primary,
+    fontSize: 12,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+  },
+  mainTitle: {
     ...typography.h1,
-    marginBottom: spacing.lg,
+    fontSize: 30,
+    color: colors.text.primary,
+    marginBottom: spacing.sm,
   },
-  error: {
-    ...typography.body,
-    color: colors.text.error,
-    marginTop: spacing.sm,
+  subtitle: {
+    ...typography.bodySmall,
+    color: colors.text.secondary,
+  },
+  cardsContainer: {
+    gap: spacing.base,
   },
 });

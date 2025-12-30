@@ -1,4 +1,5 @@
 export * from "./evaluation-focus-item";
+export * from "./feedback-card";
 export * from "./footer";
 export * from "./header";
 export * from "./header-container";

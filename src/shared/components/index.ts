@@ -3,6 +3,7 @@
  * @description Reusable UI components used across features
  */
 
+export * from "./animations";
 export * from "./layout";
 export * from "./navigation";
 export * from "./text";
