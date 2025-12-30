@@ -1,15 +1,30 @@
-import React from "react"; import { StyleSheet, View } from "react-native";
-import { ThemedText } from "@/src/shared"; import { theme } from "@/src/theme";
-const { colors, spacing } = theme; export interface
-{{pascalCase name}}Props { // Add your props here } /** *
-{{pascalCase name}}
-* @description
-{{description}}
-*/ export function
-{{pascalCase name}}({}:
-{{pascalCase name}}Props) { return (
-<View style="{styles.container}">
-  <ThemedText>{{pascalCase name}} Component</ThemedText>
-</View>
-); } const styles = StyleSheet.create({ container: { padding: spacing.base,
-backgroundColor: colors.background.card, }, });
+import React from "react";
+import { StyleSheet, View } from "react-native";
+
+import { ThemedText } from "@/src/shared";
+import { theme } from "@/src/theme";
+
+const { colors, spacing } = theme;
+
+export interface {{pascalCase name}}Props {
+  // Add your props here
+}
+
+/**
+ * {{pascalCase name}}
+ * @description {{description}}
+ */
+export function {{pascalCase name}}({}: {{pascalCase name}}Props) {
+  return (
+    <View style={styles.container}>
+      <ThemedText>{{pascalCase name}} Component</ThemedText>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    padding: spacing.base,
+    backgroundColor: colors.background.card,
+  },
+});
