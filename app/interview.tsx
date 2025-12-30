@@ -1,1 +1,1 @@
-export { SetupScreen as default } from "@/src/features/interview";
+export { default } from "@/src/features/interview/screens/processing-screen";
