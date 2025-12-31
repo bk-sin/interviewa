@@ -40,7 +40,7 @@ export default function HomeScreen() {
 
   const handleStartInterview = useCallback(() => {
     // TODO: Navigate to interview session
-    router.push("/interview/processing");
+    router.push("/interview/follow-up");
     console.log("Start interview");
   }, []);
 

@@ -6,6 +6,7 @@
 export * from "./animations";
 export * from "./layout";
 export * from "./navigation";
+export * from "./record-button";
 export * from "./text";
 
 // Cards
