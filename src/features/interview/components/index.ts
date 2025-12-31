@@ -1,3 +1,4 @@
+export * from "./checkpoint-progress";
 export * from "./evaluation-focus-item";
 export * from "./feedback-card";
 export * from "./footer";

@@ -1,3 +1,4 @@
+export { default as CheckpointScreen } from "./checkpoint-screen";
 export { default as InterviewScreen } from "./interview-screen";
 export { default as MicroFeedbackScreen } from "./micro-feedback-screen";
 export { default as PracticesScreen } from "./practices-screen";
