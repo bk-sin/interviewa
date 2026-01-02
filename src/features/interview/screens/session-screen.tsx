@@ -1,7 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -15,15 +15,15 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import { ThemedText } from "@/src/shared/components";
-import { Button } from "@/src/shared/ui";
+import { RecordButton, ThemedText } from "@/src/shared/components";
 import { theme } from "@/src/theme";
 
 const { colors, spacing, typography, borderRadius } = theme;
 
 export default function InterviewSessionScreen() {
   const insets = useSafeAreaInsets();
-  const [currentQuestion, setCurrentQuestion] = useState(1);
+  const [currentQuestion] = useState(1);
+  const [isRecording, setIsRecording] = useState(false);
   const totalQuestions = 5;
   const progress = (currentQuestion / totalQuestions) * 100;
 
@@ -49,6 +49,10 @@ export default function InterviewSessionScreen() {
     opacity: 1.2 - pulse.value,
   }));
 
+  const handleToggleRecording = () => {
+    setIsRecording((prev) => !prev);
+  };
+
   return (
     <View style={styles.mainContainer}>
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
@@ -65,86 +69,68 @@ export default function InterviewSessionScreen() {
           </ThemedText>
         </View>
 
-        {/* AI Assistant Visualization */}
-        <View style={styles.aiContainer}>
-          <View style={styles.aiCoreContainer}>
-            <Animated.View style={[styles.aiPulse, animatedPulseStyle]} />
-            <LinearGradient
-              colors={[colors.primary, colors.primaryDark]}
-              style={styles.aiCore}
-            >
-              <MaterialIcons
-                name="insights"
-                size={40}
-                color={colors.background.dark}
-              />
-            </LinearGradient>
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: insets.bottom + spacing.xl },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* AI Assistant Visualization */}
+          <View style={styles.aiContainer}>
+            <View style={styles.aiCoreContainer}>
+              <Animated.View style={[styles.aiPulse, animatedPulseStyle]} />
+              <LinearGradient
+                colors={[colors.primary, colors.primaryDark]}
+                style={styles.aiCore}
+              >
+                <MaterialIcons
+                  name="insights"
+                  size={40}
+                  color={colors.background.dark}
+                />
+              </LinearGradient>
+            </View>
+            <ThemedText style={styles.aiStatus}>
+              AI Assistant Listening...
+            </ThemedText>
           </View>
-          <ThemedText style={styles.aiStatus}>
-            AI Assistant Listening...
-          </ThemedText>
-        </View>
 
-        {/* Question Card */}
-        <View style={styles.questionCard}>
-          <ThemedText style={styles.questionCategory}>
-            TECHNICAL SKILLS
-          </ThemedText>
-          <ThemedText style={styles.questionText}>
-            {
-              '"Tell me about a complex React Native performance issue you\'ve faced and how you solved it."'
-            }
-          </ThemedText>
-        </View>
+          {/* Question Card */}
+          <View style={styles.questionCard}>
+            <ThemedText style={styles.questionCategory}>
+              TECHNICAL SKILLS
+            </ThemedText>
+            <ThemedText style={styles.questionText}>
+              {
+                '"Tell me about a complex React Native performance issue you\'ve faced and how you solved it."'
+              }
+            </ThemedText>
+          </View>
 
-        {/* Live Transcript / Feedback placeholder */}
-        <View style={styles.transcriptContainer}>
-          <ThemedText style={styles.transcriptPlaceholder}>
-            Your response will appear here as you speak...
-          </ThemedText>
-        </View>
-      </SafeAreaView>
+          {/* Live Transcript / Feedback placeholder */}
+          <View style={styles.transcriptContainer}>
+            <ThemedText style={styles.transcriptPlaceholder}>
+              Your response will appear here as you speak...
+            </ThemedText>
+          </View>
 
-      {/* Control Footer */}
-      <View
-        style={[styles.footer, { paddingBottom: insets.bottom + spacing.lg }]}
-      >
-        <View style={styles.controlsRow}>
-          <TouchableOpacity style={styles.secondaryAction}>
-            <MaterialIcons name="pause" size={24} color={colors.text.primary} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.micButton}>
-            <LinearGradient
-              colors={[colors.primary, colors.primaryDark]}
-              style={styles.micGradient}
-            >
-              <MaterialIcons
-                name="mic"
-                size={32}
-                color={colors.background.dark}
-              />
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.secondaryAction}
-            onPress={() =>
-              setCurrentQuestion((prev) => Math.min(prev + 1, totalQuestions))
-            }
-          >
-            <MaterialIcons
-              name="skip-next"
-              size={24}
-              color={colors.text.primary}
+          {/* Botón de grabación */}
+          <View style={styles.recordContainer}>
+            <RecordButton
+              onPress={handleToggleRecording}
+              isRecording={isRecording}
+              size={112}
             />
-          </TouchableOpacity>
-        </View>
 
-        <Button variant="secondary" onPress={() => {}} style={styles.endButton}>
-          Finish Interview
-        </Button>
-      </View>
+            <ThemedText style={styles.tapText}>
+              {isRecording
+                ? "Grabando tu respuesta..."
+                : "Toca el micrófono para responder"}
+            </ThemedText>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     </View>
   );
 }
@@ -181,6 +167,9 @@ const styles = StyleSheet.create({
   },
   progressTotal: {
     color: theme.rgba(colors.text.primary, 0.4),
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   aiContainer: {
     alignItems: "center",
@@ -239,9 +228,9 @@ const styles = StyleSheet.create({
     lineHeight: 32,
   },
   transcriptContainer: {
-    flex: 1,
     marginTop: spacing.xl,
     padding: spacing.md,
+    minHeight: 100,
   },
   transcriptPlaceholder: {
     ...typography.body,
@@ -249,42 +238,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontStyle: "italic",
   },
-  footer: {
-    backgroundColor: theme.rgba(colors.background.dark, 0.95),
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: theme.rgba(colors.text.primary, 0.05),
-  },
-  controlsRow: {
-    flexDirection: "row",
+  recordContainer: {
     alignItems: "center",
-    justifyContent: "center",
-    gap: 40,
-    marginBottom: spacing.lg,
+    marginTop: spacing.xl * 2,
+    gap: spacing.lg,
   },
-  micButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    ...theme.shadows.lg,
-    shadowColor: colors.primary,
-  },
-  micGradient: {
-    flex: 1,
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  secondaryAction: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: theme.rgba(colors.text.primary, 0.05),
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  endButton: {
-    borderRadius: borderRadius.lg,
+  tapText: {
+    ...typography.body,
+    color: theme.rgba(colors.text.primary, 0.7),
+    fontWeight: "500",
+    textAlign: "center",
   },
 });

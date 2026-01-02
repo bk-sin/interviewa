@@ -1,4 +1,6 @@
 export { default as CheckpointScreen } from "./checkpoint-screen";
+export { default as ConfigRoleScreen } from "./config-role-screen";
+export { default as ConfigScreen } from "./config-screen";
 export { default as FollowUpScreen } from "./follow-up-screen";
 export { default as InterviewScreen } from "./interview-screen";
 export { default as MicroFeedbackScreen } from "./micro-feedback-screen";

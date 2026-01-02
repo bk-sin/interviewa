@@ -16,7 +16,10 @@ export type { User, UserPreferences, UserStats } from "./user.types";
 // Interview types
 export type {
   CheckpointData,
+  DifficultyLevel,
+  DifficultyOption,
   FeedbackRating,
+  InterviewConfigData,
   InterviewDifficulty,
   InterviewFeedback,
   InterviewHistoryEntry,
@@ -29,6 +32,10 @@ export type {
   InterviewStatus,
   ProgressMetric,
   QuestionCategory,
+  QuestionCount,
+  QuestionCountOption,
+  RoleCategory,
+  RoleOption,
 } from "./interview.types";
 
 // Common types

@@ -1,5 +1,43 @@
 import { MaterialIcons } from "@expo/vector-icons";
 
+// Role Selection Types
+export type RoleCategory = "suggested" | "others";
+
+export interface RoleOption {
+  readonly id: string;
+  readonly title: string;
+  readonly subtitle: string;
+  readonly icon: keyof typeof MaterialIcons.glyphMap;
+  readonly category: RoleCategory;
+}
+
+// Interview Configuration Types
+export type DifficultyLevel = "beginner" | "intermediate" | "advanced";
+export type QuestionCount = 5 | 7 | 10 | "custom";
+
+export interface InterviewConfigData {
+  readonly role: string;
+  readonly difficulty: DifficultyLevel;
+  readonly questionCount: QuestionCount;
+  readonly focusAreas: {
+    technical: boolean;
+    situational: boolean;
+    cultural: boolean;
+  };
+}
+
+export interface DifficultyOption {
+  readonly id: DifficultyLevel;
+  readonly label: string;
+  readonly icon: keyof typeof MaterialIcons.glyphMap;
+}
+
+export interface QuestionCountOption {
+  readonly value: QuestionCount;
+  readonly label: string;
+  readonly description: string;
+}
+
 export interface InterviewFeedback {
   readonly id: string;
   readonly sessionId: string;
