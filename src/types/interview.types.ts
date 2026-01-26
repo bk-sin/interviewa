@@ -51,6 +51,29 @@ export interface InterviewFeedback {
 
 export type FeedbackRating = 1 | 2 | 3 | 4 | 5;
 
+// Final Report Types
+export interface PerformanceMetric {
+  readonly label: string;
+  readonly score: number; // 0 a 10
+  readonly color?: string; // Opcional, para overrides
+}
+
+export interface QuestionResult {
+  readonly id: string;
+  readonly question: string;
+  readonly score: number;
+  readonly tags: string[];
+}
+
+export interface InterviewReportData {
+  readonly totalScore: number;
+  readonly insight: string;
+  readonly metrics: PerformanceMetric[];
+  readonly strengths: string[];
+  readonly opportunities: string[];
+  readonly questions: QuestionResult[];
+}
+
 export interface InterviewHistoryEntry {
   readonly id: string;
   readonly role: string;

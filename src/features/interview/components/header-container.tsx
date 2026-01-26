@@ -2,7 +2,7 @@
  * InterviewHeaderContainer - Smart Component
  *
  * @description
- * Componente "smart" que conecta el Header presentacional con Redux.
+ * Componente "smart" que conecta el Header presentacional con TanStack Query.
  * Maneja la lógica de negocio y estado, delegando solo renderizado al Header.
  */
 
@@ -25,7 +25,7 @@ interface InterviewHeaderContainerProps {
  *
  * @description
  * Container component que:
- * 1. Lee datos de Redux
+ * 1. Lee datos de TanStack Query
  * 2. Pasa datos al componente presentacional Header
  * 3. No renderiza UI directamente
  *
@@ -40,7 +40,7 @@ interface InterviewHeaderContainerProps {
 export const InterviewHeaderContainer: React.FC<
   InterviewHeaderContainerProps
 > = ({ onBack, onEnd }) => {
-  // Leer datos de Redux
+  // Leer datos de TanStack Query via hook
   const { title, currentQuestion, totalQuestions, showProgress } =
     useInterviewHeader();
 

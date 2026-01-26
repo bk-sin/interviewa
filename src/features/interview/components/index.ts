@@ -1,3 +1,4 @@
+export * from "./animated-progress-bar";
 export * from "./checkpoint-progress";
 export * from "./config-form";
 export * from "./evaluation-focus-item";

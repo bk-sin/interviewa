@@ -1,8 +1,8 @@
 /**
- * Hook para obtener datos del header desde Redux
+ * Hook para obtener datos del header desde TanStack Query
  */
 
-import { useAppSelector } from "@/src/store/hooks";
+import { useActiveSession } from "@/src/queries";
 import { useMemo } from "react";
 
 interface InterviewHeaderData {
@@ -15,9 +15,7 @@ interface InterviewHeaderData {
 }
 
 export function useInterviewHeader(): InterviewHeaderData {
-  const activeSession = useAppSelector(
-    (state) => state.interview.activeSession
-  );
+  const { data: activeSession } = useActiveSession();
 
   return useMemo(() => {
     if (!activeSession) {

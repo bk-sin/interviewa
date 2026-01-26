@@ -8,16 +8,16 @@ import {
   useFonts,
 } from "@expo-google-fonts/inter";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import "react-native-reanimated";
-import { Provider as ReduxProvider } from "react-redux";
 
 import { preloadImages } from "@/src/lib/assets";
-import { store } from "@/src/store";
+import { queryClient } from "@/src/queries";
 import { theme } from "@/src/theme";
 
 // Prevent the splash screen from auto-hiding
@@ -101,7 +101,7 @@ export default function RootLayout() {
   }
 
   return (
-    <ReduxProvider store={store}>
+    <QueryClientProvider client={queryClient}>
       <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
         <ThemeProvider value={navigationTheme}>
           <View style={{ flex: 1, backgroundColor }}>
@@ -133,11 +133,19 @@ export default function RootLayout() {
                   gestureEnabled: false,
                 }}
               />
+              <Stack.Screen
+                name="interview"
+                options={{
+                  headerShown: false,
+                  gestureEnabled: true,
+                  animation: "slide_from_right",
+                }}
+              />
             </Stack>
             <StatusBar style="light" />
           </View>
         </ThemeProvider>
       </ClerkProvider>
-    </ReduxProvider>
+    </QueryClientProvider>
   );
 }

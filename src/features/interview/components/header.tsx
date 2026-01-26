@@ -41,7 +41,7 @@ const DEFAULT_PROPS = {
  *
  * @description
  * Componente "dumb" que solo recibe props y renderiza.
- * No sabe nada de Redux, contexto, o lógica de negocio.
+ * No sabe nada de Zustand, contexto, o lógica de negocio.
  * Delegó la barra de progreso a ProgressBar (atomización).
  *
  * @example
@@ -70,7 +70,7 @@ export const Header = React.memo<HeaderProps>(
     // Memoizar padding top para evitar recalcular en cada render
     const headerPaddingTop = useMemo(
       () => Math.max(insets.top, spacing.base),
-      [insets.top]
+      [insets.top],
     );
 
     return (
@@ -136,7 +136,7 @@ export const Header = React.memo<HeaderProps>(
         )}
       </View>
     );
-  }
+  },
 );
 
 // Display name para debugging

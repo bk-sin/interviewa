@@ -11,8 +11,11 @@
  * import { useSignInLogic } from '@/src/features/auth';
  * import { HeroCard } from '@/src/features/home';
  *
- * // Import store
- * import { store, useAppSelector } from '@/src/store';
+ * // Import TanStack Query hooks (PREFERRED)
+ * import { useUser, useInterviewRoles } from '@/src/queries';
+ *
+ * // Import Zustand stores for client state
+ * import { useUIStore } from '@/src/store';
  *
  * // Import data layer
  * import { authProvider, interviewProvider } from '@/src/data';
@@ -28,6 +31,7 @@
 // Re-export modules for convenience
 export * from "./data";
 export * from "./lib";
+export * from "./queries";
 export * from "./shared";
 export * from "./store";
 export * from "./theme";

@@ -1,49 +1,24 @@
 /**
- * Redux Store
- *
- * @description
- * Central state management with typed hooks.
- *
+ * State Management Exports
+ * 
+ * This project uses TanStack Query for server state and Zustand for client state
+ * - Server state (data fetching): Use TanStack Query hooks from @/src/queries
+ * - Client state (UI): Use Zustand stores from this module
+ * 
  * @example
  * ```tsx
- * // In your root _layout.tsx
- * import { Provider } from 'react-redux';
- * import { store } from '@/src/store';
- *
- * <Provider store={store}>
- *   <App />
- * </Provider>
- *
- * // In components
- * import { useAppSelector, useAppDispatch } from '@/src/store';
- *
- * const { user } = useAppSelector((s) => s.auth);
- * const dispatch = useAppDispatch();
+ * // For server data (PREFERRED)
+ * import { useUser, useInterviewRoles } from '@/src/queries';
+ * 
+ * const { data: user } = useUser();
+ * const { data: roles } = useInterviewRoles();
+ * 
+ * // For client state
+ * import { useUIStore } from '@/src/store';
+ * 
+ * const { isModalOpen, openModal } = useUIStore();
  * ```
  */
 
-export { store } from "./store";
-export type { AppDispatch, RootState } from "./store";
-
-export { useAppDispatch, useAppSelector } from "./hooks";
-
-// Auth actions
-export {
-  clearAuth,
-  setError as setAuthError,
-  setLoading as setAuthLoading,
-  setStats,
-  setUser,
-} from "./slices/auth.slice";
-
-// Interview actions
-export {
-  addHistoryEntry,
-  resetInterview,
-  setCurrentSession,
-  setHistory,
-  setError as setInterviewError,
-  setLoading as setInterviewLoading,
-  setProgressMetrics,
-  setRoles,
-} from "./slices/interview.slice";
+// Zustand stores for client state
+export { useUIStore } from "./useUIStore";

@@ -8,7 +8,8 @@ Este proyecto utiliza una arquitectura basada en **features** (dominios) para m�
 src/
 ├── features/           # Features por dominio de negocio
 ├── shared/            # Componentes y UI compartidos
-├── store/             # Estado global (Redux Toolkit)
+├── queries/           # TanStack Query hooks (server state)
+├── store/             # Zustand stores (client state)
 ├── data/              # Capa de datos (Repository pattern)
 ├── types/             # Tipos TypeScript centralizados
 ├── theme/             # Sistema de diseño
@@ -79,6 +80,67 @@ src/shared/
 
 **Regla:** Si un componente se usa en 2+ features → va en `shared/`
 
+## 🔄 TanStack Query (Server State)
+
+Hooks para data fetching con caching automático:
+
+```
+src/queries/
+├── queryClient.ts      # Configuración de TanStack Query
+├── hooks/
+│   ├── useAuth.ts      # Auth queries y mutations
+│   ├── useInterview.ts # Interview queries y mutations
+│   └── index.ts
+└── index.ts
+```
+
+**Características:**
+
+- ✅ Caching automático (5 min stale time)
+- ✅ Reintentos automáticos con exponential backoff
+- ✅ Optimistic updates
+- ✅ Invalidación inteligente de cache
+- ✅ Query keys centralizados
+
+**Ejemplo:**
+
+```typescript
+// Queries (lectura)
+const { data: user, isLoading } = useUser();
+const { data: roles } = useInterviewRoles();
+
+// Mutations (escritura)
+const login = useLogin();
+const createSession = useCreateInterviewSession();
+
+login.mutate({ email, password });
+createSession.mutate(sessionData);
+```
+
+## 🏪 Zustand (Client State)
+
+Stores para estado de UI que no necesita sincronización con backend:
+
+```
+src/store/
+├── useUIStore.ts       # Store de ejemplo (modals, preferences)
+├── index.ts
+└── README.md           # Documentación de migración
+```
+
+**Usar para:**
+
+- Estados de modals/drawers
+- Preferencias de UI (tema, vista)
+- Filtros temporales
+- Drafts de formularios (antes de submit)
+
+**NO usar para:**
+
+- Datos del backend (usar TanStack Query)
+- Auth state (usar TanStack Query)
+- Datos que necesitan persistencia (usar repositories)
+
 ## 🔄 Capa de Servicios
 
 Los servicios contienen **lógica de negocio** entre hooks y providers:
@@ -104,7 +166,7 @@ export class InterviewService {
 **Flujo:**
 
 ```
-Component → Hook → Service → Repository → Provider (mock/firebase/api)
+Component → Hook → TanStack Query → Repository → Provider (mock/firebase/api)
 ```
 
 ## 🗂️ Data Layer (Desacoplado)
@@ -121,6 +183,44 @@ src/data/
     ├── mock.provider.ts             # Desarrollo
     ├── firebase.provider.ts         # Producción opción 1
     └── api.provider.ts              # Producción opción 2
+```
+
+## 🔄 State Management
+
+**Server State** (datos del backend):
+
+```typescript
+// src/queries/hooks/useAuth.ts
+import { useQuery, useMutation } from "@tanstack/react-query";
+
+export function useUser() {
+  return useQuery({
+    queryKey: ["auth", "user"],
+    queryFn: () => authRepository.getCurrentUser(),
+  });
+}
+
+export function useLogin() {
+  return useMutation({
+    mutationFn: (credentials) => authRepository.login(credentials),
+    onSuccess: (user) => {
+      queryClient.setQueryData(["auth", "user"], user);
+    },
+  });
+}
+```
+
+**Client State** (UI local):
+
+```typescript
+// src/store/useUIStore.ts
+import { create } from "zustand";
+
+export const useUIStore = create((set) => ({
+  isModalOpen: false,
+  openModal: () => set({ isModalOpen: true }),
+  closeModal: () => set({ isModalOpen: false }),
+}));
 ```
 
 Cambiar de provider es **una línea**:
@@ -168,8 +268,11 @@ import { HeroCard, StatsCard } from "@/src/features/home";
 import { Button, TextInput } from "@/src/shared/ui";
 import { ThemedText, ThemedView } from "@/src/shared/components";
 
-// Store
-import { useAppSelector, useAppDispatch } from "@/src/store";
+// TanStack Query (server state)
+import { useUser, useInterviewRoles } from "@/src/queries";
+
+// Zustand (client state)
+import { useUIStore } from "@/src/store";
 
 // Data
 import { interviewProvider } from "@/src/data";
@@ -186,3 +289,6 @@ import { theme, colors } from "@/src/theme";
 - [Feature-Sliced Design](https://feature-sliced.design/)
 - [Screaming Architecture](https://blog.cleancoder.com/uncle-bob/2011/09/30/Screaming-Architecture.html)
 - [Domain-Driven Design](https://martinfowler.com/bliki/DomainDrivenDesign.html)
+- [TanStack Query](https://tanstack.com/query/latest) - Server state management
+- [Zustand](https://zustand-demo.pmnd.rs/) - Client state management
+- [Repository Pattern](https://martinfowler.com/eaaCatalog/repository.html)
