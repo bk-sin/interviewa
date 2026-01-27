@@ -17,6 +17,7 @@ import { View } from "react-native";
 import "react-native-reanimated";
 
 import { SKIP_AUTH } from "@/src/config/auth-bypass.config";
+import { MockClerkProvider } from "@/src/config/mock-clerk-provider";
 import { queryClient } from "@/src/config/tanstack.config";
 import { preloadImages } from "@/src/lib/assets";
 import { theme } from "@/src/theme";
@@ -101,60 +102,85 @@ export default function RootLayout() {
     );
   }
 
-  const appContent = (
-    <ThemeProvider value={navigationTheme}>
-      <View style={{ flex: 1, backgroundColor }}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor },
-            animation: "fade",
-          }}
-        >
-          <Stack.Screen
-            name="onboarding"
-            options={{
+  const authProvider = SKIP_AUTH ? (
+    <MockClerkProvider>
+      <ThemeProvider value={navigationTheme}>
+        <View style={{ flex: 1, backgroundColor }}>
+          <Stack
+            screenOptions={{
               headerShown: false,
-              gestureEnabled: false,
+              contentStyle: { backgroundColor },
+              animation: "fade",
             }}
-          />
-          <Stack.Screen
-            name="(auth)"
-            options={{
+          >
+            <Stack.Screen
+              name="onboarding"
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen
+              name="(auth)"
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen
+              name="(tabs)"
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
+          </Stack>
+          <StatusBar style="light" />
+        </View>
+      </ThemeProvider>
+    </MockClerkProvider>
+  ) : (
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <ThemeProvider value={navigationTheme}>
+        <View style={{ flex: 1, backgroundColor }}>
+          <Stack
+            screenOptions={{
               headerShown: false,
-              gestureEnabled: false,
+              contentStyle: { backgroundColor },
+              animation: "fade",
             }}
-          />
-          <Stack.Screen
-            name="(tabs)"
-            options={{
-              headerShown: false,
-              gestureEnabled: false,
-            }}
-          />
-          <Stack.Screen
-            name="interview"
-            options={{
-              headerShown: false,
-              gestureEnabled: true,
-              animation: "slide_from_right",
-            }}
-          />
-        </Stack>
-        <StatusBar style="light" />
-      </View>
-    </ThemeProvider>
+          >
+            <Stack.Screen
+              name="onboarding"
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen
+              name="(auth)"
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen
+              name="(tabs)"
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
+          </Stack>
+          <StatusBar style="light" />
+        </View>
+      </ThemeProvider>
+    </ClerkProvider>
   );
 
   return (
     <QueryClientProvider client={queryClient}>
-      {SKIP_AUTH ? (
-        appContent
-      ) : (
-        <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-          {appContent}
-        </ClerkProvider>
-      )}
+      {authProvider}
     </QueryClientProvider>
   );
 }

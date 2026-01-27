@@ -5,8 +5,14 @@
 export { HomeHeader } from "./home-header";
 export type { HomeHeaderProps } from "./home-header";
 
+export { HeroSection } from "./hero-section";
+
+export { StepsGrid } from "./steps-grid";
+
 export {
+  ActiveSessionCard,
   ContinueCard,
+  FeaturedCard,
   HeroCard,
   QuickActionCard,
   StatsCard,

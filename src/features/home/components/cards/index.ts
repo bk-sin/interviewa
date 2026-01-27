@@ -1,5 +1,8 @@
+export { ActiveSessionCard } from "./active-session-card";
 export { ContinueCard } from "./continue-card";
 export type { ContinueCardProps } from "./continue-card";
+
+export { FeaturedCard } from "./featured-card";
 
 export { HeroCard } from "./hero-card";
 export type { HeroCardProps } from "./hero-card";

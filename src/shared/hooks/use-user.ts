@@ -1,31 +1,24 @@
 /**
  * Wrapper for Clerk's useUser hook that handles auth bypass
- * When SKIP_AUTH is true, returns mock user data
+ * This is safe because the hook is called inside the correct provider context
  */
 
 import { useUser as useClerkUser } from "@clerk/clerk-expo";
 
-import { MOCK_USER, SKIP_AUTH } from "@/src/config/auth-bypass.config";
+import { SKIP_AUTH } from "@/src/config/auth-bypass.config";
+import { useMockUser } from "@/src/config/mock-clerk-provider";
 
 export function useUser() {
-  const clerkUser = useClerkUser();
-
+  // This looks conditional but it's safe because:
+  // - When SKIP_AUTH = true, we're inside MockClerkProvider, so useMockUser works
+  // - When SKIP_AUTH = false, we're inside ClerkProvider, so useClerkUser works
+  // The Provider is chosen at the root level, not here
+  
   if (SKIP_AUTH) {
-    return {
-      ...clerkUser,
-      isLoaded: true,
-      user: {
-        id: "mock-user-id",
-        firstName: MOCK_USER.firstName,
-        lastName: MOCK_USER.lastName,
-        fullName: MOCK_USER.firstName,
-        imageUrl: MOCK_USER.imageUrl,
-        primaryEmailAddress: {
-          emailAddress: MOCK_USER.email,
-        },
-      } as any,
-    };
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useMockUser() as any;
   }
 
-  return clerkUser;
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return useClerkUser();
 }
