@@ -119,7 +119,7 @@ export type InterviewStatus =
 export type InterviewDifficulty = "easy" | "medium" | "hard";
 
 // Estados de la entrevista según backend
-export type InterviewState = 
+export type InterviewState =
   | "INTRO"
   | "QUESTION"
   | "RECORDING"
@@ -132,7 +132,7 @@ export type InterviewState =
   | "ERROR";
 
 // Categorías de preguntas
-export type QuestionCategory = 
+export type QuestionCategory =
   | "TECHNICAL"
   | "BEHAVIORAL"
   | "PROBLEM_SOLVING"

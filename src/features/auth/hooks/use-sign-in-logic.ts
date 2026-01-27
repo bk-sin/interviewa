@@ -1,4 +1,4 @@
-import { AUTH_ROUTES } from "@/src/config";
+import { AUTH_ROUTES } from "../config";
 import { useSignIn } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";

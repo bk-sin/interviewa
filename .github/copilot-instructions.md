@@ -7,7 +7,7 @@
 ## Architecture & Stack
 
 - **Framework**: Expo SDK 54 with React Native 0.81.5, React 19.1.0
-- **Navigation**: Expo Router v6 (file-based routing) with typed routes enabled
+- **Navigation**: Expo Router v6 (file-based routing) with typed routes enabled, centralized in `src/lib/navigation/`
 - **State Management**: TanStack Query (@tanstack/react-query) for server state, Zustand for client state
 - **Authentication**: Clerk (@clerk/clerk-expo) for user auth with 2FA support
 - **Storage**: expo-secure-store for sensitive data persistence
@@ -16,21 +16,103 @@
 - **Forms**: react-hook-form + zod for validation
 - **Voice**: expo-speech-recognition for voice-based interviews
 
+## 🎯 Architecture Philosophy: Vertical Slicing (Screaming Architecture)
+
+**CRITICAL: This project uses VERTICAL SLICING by feature, NOT horizontal layering.**
+
+### Core Principle: Features Are Self-Contained
+
+Each feature in `src/features/<feature-name>/` should be:
+
+- ✅ **Self-contained**: Everything the feature needs lives inside its folder
+- ✅ **Screaming**: The folder name tells you what the feature does (interview, auth, profile)
+- ✅ **Cohesive**: Related code is co-located (screens, hooks, components, types, services)
+- ✅ **Minimal shared**: Only move to `src/shared/` when truly reused across 3+ features
+
+### ❌ WRONG (Horizontal Layering):
+
+```
+src/
+  ├─ screens/          # ❌ All screens mixed together
+  ├─ components/       # ❌ All components mixed together
+  ├─ hooks/            # ❌ All hooks mixed together
+  └─ types/            # ❌ All types mixed together
+```
+
+### ✅ CORRECT (Vertical Slicing):
+
+```
+src/features/
+  ├─ interview/        # ✅ Everything for interview feature
+  │   ├─ screens/
+  │   ├─ components/
+  │   ├─ hooks/
+  │   ├─ types/
+  │   ├─ services/
+  │   └─ __mocks__/
+  ├─ auth/             # ✅ Everything for auth feature
+  │   ├─ screens/
+  │   ├─ components/
+  │   └─ hooks/
+  └─ profile/          # ✅ Everything for profile feature
+      └─ screens/
+```
+
+### Decision Tree: Where Does This Code Go?
+
+**When creating ANY new code, ask yourself:**
+
+1. **Is it used by only ONE feature?**
+   → ✅ Put it in `src/features/<feature>/`
+
+2. **Is it a base UI primitive (Button, Input, Badge)?**
+   → ✅ Put it in `src/shared/ui/`
+
+3. **Is it used by 3+ features?**
+   → ✅ Put it in `src/shared/components/` or `src/shared/` (rare)
+
+4. **Is it a cross-cutting concern (navigation, theme, config)?**
+   → ✅ Put it in `src/lib/` or `src/config/`
+
+**Default answer: Put it in the feature folder.** Move to shared only when proven necessary.
+
 ## File Structure Patterns
 
+**REMEMBER: Features first, shared second. Vertical slicing over horizontal layering.**
+
 - **Routing**: `app/` directory uses Expo Router conventions
-  - `app/_layout.tsx` - Root provider setup (ClerkProvider, Zustand store, fonts, splash screen)
+  - `app/_layout.tsx` - Root provider setup (QueryClientProvider, ClerkProvider, fonts, splash screen)
   - `app/(tabs)/` - Bottom tab navigator with index/practices/history/profile
   - `app/(auth)/` - Auth flow screens (sign-in, sign-up, verify-email, verify-2fa)
   - `app/interview/` - Interview session screens (config, session, feedback, report)
-- **Features**: `src/features/<feature-name>/` for vertical slices (screens, types, components, hooks, services, utils)
-  - Each feature is self-contained with its own types, components, hooks, services, and utils
-  - Example: `src/features/interview/` contains screens/, types/, components/, hooks/, services/
-- **Shared Components**: `src/shared/` with barrel exports via `index.ts`
-  - `ui/` subfolder for base UI primitives (Button, TextInput, Badge, ProgressBar, FormInput)
-  - `components/` subfolder for domain components (ThemedText, ThemedView, ParallaxScrollView)
+  - **Each route file re-exports from its feature**: `export { default } from "@/src/features/interview"`
+
+- **Features** (PRIMARY LOCATION FOR NEW CODE): `src/features/<feature-name>/`
+  - **VERTICAL SLICES**: Each feature is self-contained with ALL its code
+  - Feature structure: `screens/`, `components/`, `hooks/`, `types/`, `services/`, `utils/`, `config/`, `__mocks__/`
+  - **Navigation helpers go in `utils/navigation.ts`** inside each feature
+  - **Feature configs go in `config/`** inside each feature
+  - **Only create subfolders you actually need** - no empty placeholders
+  - Examples:
+    - `src/features/interview/` - Everything for interview flow (navigation, config, hooks, routes)
+    - `src/features/auth/` - Everything for authentication (navigation, config, hooks, routes)
+    - `src/features/profile/` - Everything for user profile
+    - `src/features/history/` - Everything for interview history
+- **Shared Components** (ONLY when used by 3+ features): `src/shared/`
+  - `ui/` - Base UI primitives (Button, TextInput, Badge, ProgressBar, FormInput)
+  - `components/` - Domain components (ThemedText, ThemedView, ParallaxScrollView)
+  - `utils/` - Generic utilities (useNavigation for tabs/back navigation)
+  - **Rule**: Move here only when component is proven to be reused across multiple features
+- **Libraries & Utilities**: `src/lib/`
+  - `navigation/` - **ONLY shared route constants (TAB_ROUTES, ONBOARDING_ROUTE)** - Feature routes live in features
+  - `api/` - API client configuration
+  - `assets/` - Asset loader utilities
+- **Configuration**: `src/config/`
+  - **ONLY cross-feature configs** (onboarding.config, reactotron.config)
+  - Feature configs live in features: `src/features/<feature>/config/`
 - **State Management**:
-  - `src/queries/` - TanStack Query hooks and configuration (server state)
+  - `src/queries/` - **ONLY** TanStack Query client configuration
+  - Query hooks live in features: `src/features/<feature>/hooks/use-*.query.ts`
   - `src/store/` - Zustand stores for client state (UI state, preferences)
 - **Data Layer**: `src/data/` with Repository pattern
   - `repositories/` - Data interfaces (interview.repository, auth.repository)
@@ -41,19 +123,90 @@
 
 ## Critical Conventions
 
-### Typings live in `src/types/` or feature-local `types/`
+### 🎯 Vertical Slicing: Where Does My Code Go?
 
-- **Feature-specific types go in `src/features/<feature>/types/`** (preferred for vertical slices).
-- **Cross-feature/shared types go in `src/types/`** (only if truly shared across multiple features).
-- Avoid defining exported domain types inline inside screens/components.
-- Prefer importing types from `@/src/features/<feature>/types` or `@/src/types` to keep the app consistent and reduce circular deps.
+**BEFORE creating ANY file, use this decision tree:**
 
-### Mock data lives in `__mocks__/`
+```
+New code needed?
+├─ Is it specific to ONE feature? (e.g., InterviewCard, useInterviewLogic)
+│  └─ ✅ PUT IN: src/features/<feature>/<type>/
+│      Examples:
+│      - src/features/interview/components/question-card.tsx
+│      - src/features/interview/hooks/use-session-logic.ts
+│      - src/features/interview/types/index.ts
+│      - src/features/interview/services/interview.service.ts
+│
+├─ Is it a BASE UI primitive? (Button, Input, Badge, etc.)
+│  └─ ✅ PUT IN: src/shared/ui/
+│      Examples:
+│      - src/shared/ui/button.tsx
+│      - src/shared/ui/text-input.tsx
+│
+├─ Is it used by 3+ features? (proven reuse, not speculation)
+│  └─ ✅ PUT IN: src/shared/components/
+│      Examples:
+│      - src/shared/components/themed-text.tsx (used everywhere)
+│      - src/shared/components/loading-spinner.tsx (used in many features)
+│
+├─ Is it cross-cutting? (navigation, theme, config)
+│  └─ ✅ PUT IN: src/lib/ or src/config/
+│      Examples:
+│      - src/lib/navigation/routes.ts (only TAB_ROUTES, ONBOARDING_ROUTE)
+│      - src/config/onboarding.config.ts (cross-feature onboarding)
+│      - Feature-specific: src/features/interview/config/interview.config.ts
+│      - Feature-specific: src/features/auth/config/auth.config.ts
+│
+└─ ❌ WHEN IN DOUBT: Put it in the feature folder. Move later if needed.
+```
 
-- **Feature-specific mocks go in `src/features/<feature>/__mocks__/`** (preferred for vertical slices).
-- **Shared mocks go in `__mocks__/`** at the root level (only if truly shared).
-- Avoid embedding large mock arrays/objects inline inside screens/components.
-- Tests and development can import from `__mocks__/`; app runtime code should use the data layer (repositories/providers).
+### Typings: Feature-local first, shared second
+
+- **Feature-specific types go in `src/features/<feature>/types/`** (DEFAULT)
+  - Example: `src/features/interview/types/session.types.ts`
+  - Export from feature barrel: `export * from "./types"`
+- **Cross-feature/shared types go in `src/types/`** (ONLY if truly shared across 3+ features)
+  - Example: `src/types/common.types.ts` for User, ApiResponse, etc.
+- ❌ **NEVER** define exported domain types inline inside screens/components
+- ✅ **ALWAYS** import types from `@/src/features/<feature>/types` or `@/src/types`
+
+**Example (CORRECT):**
+
+```typescript
+// src/features/interview/types/index.ts
+export interface InterviewSession {
+  id: string;
+  questions: Question[];
+}
+
+// src/features/interview/hooks/use-session-logic.ts
+import { InterviewSession } from "../types"; // ✅ Feature-local type
+```
+
+### Mock data: Feature-local first, shared second
+
+- **Feature-specific mocks go in `src/features/<feature>/__mocks__/`** (DEFAULT)
+  - Example: `src/features/interview/__mocks__/sessions.mock.ts`
+  - Used only by that feature's components/tests
+- **Shared mocks go in `__mocks__/`** at root (ONLY if truly shared)
+  - Example: `__mocks__/data.mock.ts` for cross-feature test data
+- ❌ **NEVER** embed large mock arrays/objects inline inside screens/components
+- ✅ **ALWAYS** import from `__mocks__/` directories
+- ⚠️ **NOTE**: App runtime code should use data layer (repositories/providers), not mocks directly
+
+**Example (CORRECT):**
+
+```typescript
+// src/features/interview/__mocks__/questions.mock.ts
+export const mockQuestions = [
+  { id: "1", text: "Tell me about yourself" },
+  // ...
+];
+
+// src/features/interview/screens/session-screen.tsx
+// In development/tests only:
+import { mockQuestions } from "../__mocks__/questions.mock";
+```
 
 ### Styling Requirements
 
@@ -84,18 +237,14 @@
 />
 
 // TanStack Query - Fetching data
-const { data, isLoading, error } = useQuery({
-  queryKey: ['user', userId],
-  queryFn: () => userRepository.getById(userId),
-});
+import { useUser } from '@/src/features/auth';
+
+const { data: user, isLoading } = useUser();
 
 // TanStack Query - Mutations
-const mutation = useMutation({
-  mutationFn: (data: CreateUserData) => userRepository.create(data),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['users'] });
-  },
-});
+import { useUpdateProfile } from '@/src/features/auth';
+
+const { mutate: updateProfile } = useUpdateProfile();
 
 // ThemedText - theme-aware text component
 <ThemedText variant="title">Welcome to InterviewA</ThemedText>
@@ -104,6 +253,22 @@ const mutation = useMutation({
 <ThemedView style={styles.container}>
   <ThemedText>Content</ThemedText>
 </ThemedView>
+
+// Navigation - Feature-specific navigation hooks
+import { useInterviewNavigation } from '@/src/features/interview';
+import { useNavigation } from '@/src/shared';
+import { ROUTES } from '@/src/lib/navigation';
+
+// Use feature navigation hook (PREFERRED)
+const { startQuickInterview, goBack } = useInterviewNavigation();
+startQuickInterview();
+
+// Use generic navigation for tabs/back
+const { goToProfile, goBack } = useNavigation();
+goToProfile();
+
+// Direct route constants (when needed)
+router.push(ROUTES.INTERVIEW.SESSION);
 ```
 
 ### Typography Usage
@@ -116,6 +281,35 @@ Use ThemedText component with semantic variants:
 - `error` - Error messages
 
 Color props are handled via theme (dark mode aware).
+
+## ⚠️ Critical Rules: What NOT to Do
+
+**ALWAYS follow vertical slicing:**
+
+- ❌ **NEVER** create `src/components/` folder with all components mixed
+- ❌ **NEVER** create `src/hooks/` folder for feature-specific hooks
+- ❌ **NEVER** create `src/screens/` folder with all screens mixed
+- ❌ **NEVER** put feature code in `src/shared/` unless used by 3+ features
+- ✅ **ALWAYS** put feature code in `src/features/<feature>/` first
+
+**Navigation:**
+
+- ❌ **NEVER** hardcode route strings: `router.push("/interview/session")`
+- ❌ **NEVER** create centralized navigation helpers in `src/lib/`
+- ✅ **ALWAYS** use feature navigation hooks: `useInterviewNavigation()` from feature
+- ✅ **ALWAYS** keep navigation logic in `src/features/<feature>/utils/navigation.ts`
+- ✅ **OR** use route constants: `router.push(ROUTES.INTERVIEW.SESSION)`
+
+**Styling:**
+
+- ❌ **NEVER** use inline styles for static values
+- ❌ **NEVER** hardcode colors: `backgroundColor: "#fff"`
+- ✅ **ALWAYS** use StyleSheet.create() and theme tokens
+
+**Documentation:**
+
+- ❌ **NEVER** create markdown documentation files (TESTING.md, MIGRATION.md, etc.)
+- ✅ Let the developer create these manually when needed
 
 ## Development Workflow
 

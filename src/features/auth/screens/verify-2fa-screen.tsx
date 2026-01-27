@@ -1,4 +1,4 @@
-import { AUTH_ROUTES, AUTH_VALIDATION } from "@/src/config";
+import { AUTH_ROUTES, AUTH_VALIDATION } from "../config";
 import { getClerkErrorMessage } from "@/src/features/auth/utils";
 import { Button, ErrorAlert, TextInput } from "@/src/shared/ui";
 import { theme } from "@/src/theme";

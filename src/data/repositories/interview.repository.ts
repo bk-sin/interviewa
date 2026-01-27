@@ -4,9 +4,10 @@ import type {
   InterviewHistoryEntry,
   InterviewRole,
   InterviewSession,
-  PaginatedResponse,
   ProgressMetric,
-} from "@/src/types";
+} from "@/src/features/interview";
+
+import type { PaginatedResponse } from "@/src/types";
 
 /**
  * Parameters required to create a new interview session
@@ -60,7 +61,7 @@ export interface InterviewRepository {
 
   /** Fetch paginated interview history for a user */
   getHistory(
-    params: GetHistoryParams
+    params: GetHistoryParams,
   ): Promise<PaginatedResponse<InterviewHistoryEntry>>;
 
   /** Submit an answer and receive AI feedback */

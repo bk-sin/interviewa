@@ -1,7 +1,7 @@
-import { useRouter } from "expo-router";
+import { useInterviewNavigation } from "../utils/navigation";
 
 export const useSetupLogic = () => {
-  const router = useRouter();
+  const { startSession, goBack } = useInterviewNavigation();
 
   const interviewStats = [
     { id: "duration", icon: "timer", value: "12", label: "MINUTES" },
@@ -9,16 +9,28 @@ export const useSetupLogic = () => {
   ] as const;
 
   const focusGoals = [
-    { icon: "visibility", title: "Clarity", description: "Clear, concise articulation of thoughts." },
-    { icon: "account-tree", title: "Structure", description: "Logical and organized problem solving." },
-    { icon: "psychology", title: "Confidence", description: "Professional delivery and poise." },
+    {
+      icon: "visibility",
+      title: "Clarity",
+      description: "Clear, concise articulation of thoughts.",
+    },
+    {
+      icon: "account-tree",
+      title: "Structure",
+      description: "Logical and organized problem solving.",
+    },
+    {
+      icon: "psychology",
+      title: "Confidence",
+      description: "Professional delivery and poise.",
+    },
   ] as const;
 
   const handleStartInterview = () => {
-    router.push("/interview/session");
+    startSession();
   };
 
-  const handleBack = () => router.back();
+  const handleBack = () => goBack();
 
   return {
     interviewStats,

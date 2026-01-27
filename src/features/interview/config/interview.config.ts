@@ -1,4 +1,4 @@
-import type { DifficultyOption, QuestionCountOption } from "@/src/types";
+import type { DifficultyOption, QuestionCountOption } from "../types";
 
 /**
  * Opciones de dificultad disponibles para la configuración de entrevista

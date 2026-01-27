@@ -1,47 +1,21 @@
 /**
- * Centralized Type Definitions
+ * Shared Types
  *
  * @description
- * All domain types exported from a single entry point.
+ * Only cross-feature types are exported here.
+ * Feature-specific types live in their respective features:
+ * - User types: @/src/features/auth/types
+ * - Interview types: @/src/features/interview/types
  *
  * @example
  * ```tsx
- * import type { User, InterviewSession, ApiResponse } from '@/src/types';
+ * import type { ApiResponse, PaginatedResponse } from '@/src/types';
+ * import type { User } from '@/src/features/auth';
+ * import type { InterviewSession } from '@/src/features/interview';
  * ```
  */
 
-// User types
-export type { User, UserPreferences, UserStats } from "./user.types";
-
-// Interview types
-export type {
-  CheckpointData,
-  DifficultyLevel,
-  DifficultyOption,
-  FeedbackRating,
-  InterviewConfigData,
-  InterviewDifficulty,
-  InterviewFeedback,
-  InterviewHistoryEntry,
-  InterviewQuestion,
-  InterviewReportData,
-  InterviewRole,
-  InterviewSession,
-  InterviewSessionPayload,
-  InterviewSessionResponse,
-  InterviewState,
-  InterviewStatus,
-  PerformanceMetric,
-  ProgressMetric,
-  QuestionCategory,
-  QuestionCount,
-  QuestionCountOption,
-  QuestionResult,
-  RoleCategory,
-  RoleOption,
-} from "./interview.types";
-
-// Common types
+// Common types (truly shared across features)
 export type {
   ApiResponse,
   AppError,

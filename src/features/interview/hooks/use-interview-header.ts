@@ -2,8 +2,9 @@
  * Hook para obtener datos del header desde TanStack Query
  */
 
-import { useActiveSession } from "@/src/queries";
 import { useMemo } from "react";
+
+import { useActiveSession } from "./use-interview.query";
 
 interface InterviewHeaderData {
   title: string;
@@ -70,7 +71,10 @@ export function useInterviewHeader(): InterviewHeaderData {
       title,
       currentQuestion: currentIndex,
       totalQuestions: payload.totalQuestions,
-      showProgress: state === "QUESTION" || state === "RECORDING" || state === "MICRO_FEEDBACK",
+      showProgress:
+        state === "QUESTION" ||
+        state === "RECORDING" ||
+        state === "MICRO_FEEDBACK",
       interviewId,
       state,
     };

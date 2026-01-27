@@ -49,3 +49,6 @@ export interface ErrorMapping {
   linkText?: string;
   linkHref?: string;
 }
+
+// User types
+export type { User, UserPreferences, UserStats } from "./user.types";

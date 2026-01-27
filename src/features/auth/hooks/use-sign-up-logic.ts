@@ -1,9 +1,3 @@
-import {
-  AUTH_MESSAGES,
-  AUTH_ROUTES,
-  AUTH_STRATEGIES,
-  AUTH_VALIDATION,
-} from "@/src/config";
 import { useSignUp } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
@@ -11,6 +5,8 @@ import { useCallback, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { TextInput as RNTextInput } from "react-native";
 import { z } from "zod";
+import { AUTH_MESSAGES, AUTH_STRATEGIES, AUTH_VALIDATION } from "../config";
+import { AUTH_ROUTES } from "../routes";
 import {
   getClerkErrorMessage,
   shouldRedirectToSignIn,
@@ -32,7 +28,7 @@ const signUpSchema = z
       .min(1, AUTH_MESSAGES.PASSWORD_REQUIRED)
       .min(
         AUTH_VALIDATION.PASSWORD_MIN_LENGTH,
-        AUTH_MESSAGES.PASSWORD_MIN_LENGTH
+        AUTH_MESSAGES.PASSWORD_MIN_LENGTH,
       ),
     confirmPassword: z.string().min(1, AUTH_MESSAGES.PASSWORD_CONFIRM_REQUIRED),
   })
@@ -154,7 +150,7 @@ export function useSignUpLogic(): UseSignUpLogicReturn {
         setIsLoading(false);
       }
     },
-    [isLoaded, isLoading, signUp, router]
+    [isLoaded, isLoading, signUp, router],
   );
 
   // Focus flow handlers

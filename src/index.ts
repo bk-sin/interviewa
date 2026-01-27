@@ -12,7 +12,8 @@
  * import { HeroCard } from '@/src/features/home';
  *
  * // Import TanStack Query hooks (PREFERRED)
- * import { useUser, useInterviewRoles } from '@/src/queries';
+ * import { useUser } from '@/src/features/auth';
+ * import { useInterviewRoles } from '@/src/features/interview';
  *
  * // Import Zustand stores for client state
  * import { useUIStore } from '@/src/store';
@@ -21,7 +22,9 @@
  * import { authProvider, interviewProvider } from '@/src/data';
  *
  * // Import types
- * import type { User, InterviewSession } from '@/src/types';
+ * import type { ApiResponse } from '@/src/types';
+ * import type { User } from '@/src/features/auth';
+ * import type { InterviewSession } from '@/src/features/interview';
  *
  * // Import theme
  * import { theme, colors, spacing } from '@/src/theme';
@@ -31,7 +34,6 @@
 // Re-export modules for convenience
 export * from "./data";
 export * from "./lib";
-export * from "./queries";
 export * from "./shared";
 export * from "./store";
 export * from "./theme";

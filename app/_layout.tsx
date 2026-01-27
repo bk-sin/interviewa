@@ -16,8 +16,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import "react-native-reanimated";
 
+import { queryClient } from "@/src/config/tanstack.config";
 import { preloadImages } from "@/src/lib/assets";
-import { queryClient } from "@/src/queries";
 import { theme } from "@/src/theme";
 
 // Prevent the splash screen from auto-hiding
@@ -25,7 +25,7 @@ SplashScreen.preventAutoHideAsync();
 
 if (__DEV__) {
   import("@/src/config/reactotron.config").then(() =>
-    console.log("Reactotron Configured")
+    console.log("Reactotron Configured"),
   );
 }
 
@@ -37,7 +37,7 @@ const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
 if (!publishableKey) {
   throw new Error(
-    "Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env"
+    "Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env",
   );
 }
 

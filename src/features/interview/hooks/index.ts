@@ -9,3 +9,6 @@ export * from "./use-interview-config-logic";
 export * from "./use-processing-logic";
 
 export * from "./use-micro-feedback-logic";
+
+// TanStack Query hooks (server state)
+export * from "./use-interview.query";

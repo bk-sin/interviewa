@@ -1,6 +1,6 @@
 /**
  * Authentication Constants
- * @description Centralized definitions for auth-related strings and configuration
+ * @description Auth-specific configuration and validation constants
  */
 
 /**
@@ -13,21 +13,6 @@ export const AUTH_STRATEGIES = {
 
 export type OAuthStrategy =
   (typeof AUTH_STRATEGIES)[keyof typeof AUTH_STRATEGIES];
-
-/**
- * Authentication-related route paths
- */
-export const AUTH_ROUTES = {
-  SIGN_IN: "/(auth)/sign-in",
-  SIGN_UP: "/(auth)/sign-up",
-  VERIFY_EMAIL: "/(auth)/verify-email",
-  VERIFY_2FA: "/(auth)/verify-2fa",
-  FORGOT_PASSWORD: "/(auth)/forgot-password",
-  ONBOARDING: "/onboarding",
-  HOME: "/(tabs)",
-} as const;
-
-export type AuthRoute = (typeof AUTH_ROUTES)[keyof typeof AUTH_ROUTES];
 
 /**
  * Validation constraints

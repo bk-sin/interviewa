@@ -89,7 +89,7 @@ export function useCreateInterviewSession() {
 
   return useMutation({
     mutationFn: async (
-      params: Omit<InterviewSession, "id" | "startedAt">
+      params: Omit<InterviewSession, "id" | "startedAt">,
     ): Promise<InterviewSessionResponse> => {
       // TODO: Implementar con repository
       // return interviewRepository.createSession(params);
@@ -124,9 +124,10 @@ export function useUpdateInterviewState() {
       });
 
       // Snapshot del valor anterior
-      const previousSession = queryClient.getQueryData<InterviewSessionResponse>(
-        interviewKeys.activeSession()
-      );
+      const previousSession =
+        queryClient.getQueryData<InterviewSessionResponse>(
+          interviewKeys.activeSession(),
+        );
 
       // Update optimista
       if (previousSession) {
@@ -135,7 +136,7 @@ export function useUpdateInterviewState() {
           {
             ...previousSession,
             state,
-          }
+          },
         );
       }
 
@@ -146,13 +147,15 @@ export function useUpdateInterviewState() {
       if (context?.previousSession) {
         queryClient.setQueryData(
           interviewKeys.activeSession(),
-          context.previousSession
+          context.previousSession,
         );
       }
     },
     onSettled: () => {
       // Refetch para asegurar sincronización con server
-      queryClient.invalidateQueries({ queryKey: interviewKeys.activeSession() });
+      queryClient.invalidateQueries({
+        queryKey: interviewKeys.activeSession(),
+      });
     },
   });
 }
@@ -177,9 +180,10 @@ export function useUpdateSessionPayload() {
         queryKey: interviewKeys.activeSession(),
       });
 
-      const previousSession = queryClient.getQueryData<InterviewSessionResponse>(
-        interviewKeys.activeSession()
-      );
+      const previousSession =
+        queryClient.getQueryData<InterviewSessionResponse>(
+          interviewKeys.activeSession(),
+        );
 
       if (previousSession) {
         queryClient.setQueryData<InterviewSessionResponse>(
@@ -190,7 +194,7 @@ export function useUpdateSessionPayload() {
               ...previousSession.payload,
               ...payload,
             },
-          }
+          },
         );
       }
 
@@ -200,12 +204,14 @@ export function useUpdateSessionPayload() {
       if (context?.previousSession) {
         queryClient.setQueryData(
           interviewKeys.activeSession(),
-          context.previousSession
+          context.previousSession,
         );
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: interviewKeys.activeSession() });
+      queryClient.invalidateQueries({
+        queryKey: interviewKeys.activeSession(),
+      });
     },
   });
 }

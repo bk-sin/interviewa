@@ -9,3 +9,6 @@ export { useSignUpLogic } from "./use-sign-up-logic";
 export type { SignUpFormData } from "./use-sign-up-logic";
 export { useUserSync } from "./use-user-sync";
 export { useWarmUpBrowser } from "./use-warm-up-browser";
+
+// TanStack Query hooks (server state)
+export * from "./use-auth.query";

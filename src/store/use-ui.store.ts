@@ -1,7 +1,7 @@
 /**
  * Migration Helper: Zustand Store for Client State
  * Use this for UI state that doesn't need to be synced with server
- * 
+ *
  * Examples:
  * - Modal/drawer open states
  * - Form draft states (before submission)
@@ -15,7 +15,7 @@ interface UIState {
   // Example: Modal states
   isModalOpen: boolean;
   modalContent: string | null;
-  
+
   // Actions
   openModal: (content: string) => void;
   closeModal: () => void;
@@ -28,7 +28,7 @@ interface UIState {
 export const useUIStore = create<UIState>((set) => ({
   isModalOpen: false,
   modalContent: null,
-  
+
   openModal: (content) => set({ isModalOpen: true, modalContent: content }),
   closeModal: () => set({ isModalOpen: false, modalContent: null }),
 }));

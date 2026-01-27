@@ -269,7 +269,8 @@ import { Button, TextInput } from "@/src/shared/ui";
 import { ThemedText, ThemedView } from "@/src/shared/components";
 
 // TanStack Query (server state)
-import { useUser, useInterviewRoles } from "@/src/queries";
+import { useUser } from "@/src/features/auth";
+import { useInterviewRoles } from "@/src/features/interview";
 
 // Zustand (client state)
 import { useUIStore } from "@/src/store";
