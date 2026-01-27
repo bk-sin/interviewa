@@ -1,13 +1,13 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import {
-  SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useUserSync } from "@/src/features/auth/hooks";
 import {

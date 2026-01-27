@@ -304,7 +304,9 @@ Color props are handled via theme (dark mode aware).
 
 - ❌ **NEVER** use inline styles for static values
 - ❌ **NEVER** hardcode colors: `backgroundColor: "#fff"`
+- ❌ **NEVER** use `SafeAreaView` from `react-native` (deprecated) - use `react-native-safe-area-context` instead
 - ✅ **ALWAYS** use StyleSheet.create() and theme tokens
+- ✅ **ALWAYS** import SafeAreaView from `react-native-safe-area-context`
 
 **Documentation:**
 
@@ -368,6 +370,7 @@ See [PLOP.md](../PLOP.md) for details.
 - ❌ Direct color values (use `colors` from theme)
 - ❌ Inline styles for spacing - use `spacing` constants
 - ❌ Importing `Text` from `react-native` - use ThemedText/ThemedTextInter components
+- ❌ Importing `SafeAreaView` from `react-native` - use `react-native-safe-area-context` instead
 - ❌ Creating components without barrel exports - add to `index.ts`
 - ❌ Mixing icon libraries - only @expo/vector-icons
 - ❌ Breaking strict TypeScript - all props must be typed
