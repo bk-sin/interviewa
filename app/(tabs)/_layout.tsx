@@ -1,10 +1,10 @@
-import { useAuth } from "@clerk/clerk-expo";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Redirect, Tabs } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 
 import { HapticTab } from "@/src/shared/components";
+import { useAuth } from "@/src/shared/hooks";
 import { colors, rgba } from "@/src/theme";
 
 export default function TabLayout() {

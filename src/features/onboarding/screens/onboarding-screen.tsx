@@ -1,8 +1,9 @@
 import { onboardingContent, onboardingFeatures } from "@/src/config";
+import { SKIP_AUTH } from "@/src/config/auth-bypass.config";
 import { FeatureItem } from "@/src/shared/components";
+import { useAuth } from "@/src/shared/hooks";
 import { Button } from "@/src/shared/ui";
 import { theme } from "@/src/theme";
-import { useAuth } from "@clerk/clerk-expo";
 import { Image } from "expo-image";
 import { Redirect, useRouter } from "expo-router";
 import {
@@ -69,20 +70,24 @@ export default function OnboardingScreen() {
 
         <View style={styles.footer}>
           <Button
-            onPress={() => router.push("/(auth)/sign-up")}
+            onPress={() =>
+              router.push(SKIP_AUTH ? "/(tabs)" : "/(auth)/sign-up")
+            }
             fullWidth
             accessibilityHint="Navega a la pantalla de registro"
           >
             {onboardingContent.ctaButton}
           </Button>
-          <Button
-            onPress={() => router.push("/(auth)/sign-in")}
-            variant="link"
-            accessibilityRole="link"
-            accessibilityHint="Navega a la pantalla de inicio de sesión"
-          >
-            {onboardingContent.signInLink}
-          </Button>
+          {!SKIP_AUTH && (
+            <Button
+              onPress={() => router.push("/(auth)/sign-in")}
+              variant="link"
+              accessibilityRole="link"
+              accessibilityHint="Navega a la pantalla de inicio de sesión"
+            >
+              {onboardingContent.signInLink}
+            </Button>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

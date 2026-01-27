@@ -10,6 +10,9 @@
 export { onboardingContent, onboardingFeatures } from "./onboarding.config";
 export type { Feature } from "./onboarding.config";
 
+// Auth bypass configuration
+export { MOCK_USER, SKIP_AUTH } from "./auth-bypass.config";
+
 // Reactotron configuration
 export { default as reactotronConfig } from "./reactotron.config";
 

@@ -1,8 +1,9 @@
-import { theme } from "@/src/theme";
-import { useAuth } from "@clerk/clerk-expo";
 import { Redirect, Stack } from "expo-router";
 import { useEffect } from "react";
 import { BackHandler, View } from "react-native";
+
+import { useAuth } from "@/src/shared/hooks";
+import { theme } from "@/src/theme";
 
 export default function AuthRoutesLayout() {
   const { isSignedIn, isLoaded } = useAuth();
@@ -14,7 +15,7 @@ export default function AuthRoutesLayout() {
       () => {
         // Return true to prevent default behavior (closing the app)
         return true;
-      }
+      },
     );
 
     return () => backHandler.remove();

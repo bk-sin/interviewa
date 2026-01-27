@@ -1,4 +1,3 @@
-import { useAuth, useUser } from "@clerk/clerk-expo";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -9,7 +8,9 @@ import {
   View,
 } from "react-native";
 
+import { SKIP_AUTH } from "@/src/config/auth-bypass.config";
 import { Text } from "@/src/shared/components";
+import { useAuth, useUser } from "@/src/shared/hooks";
 import { theme } from "@/src/theme";
 
 const { borderRadius, colors, shadows, spacing, typography } = theme;
@@ -83,8 +84,14 @@ export default function ProfileScreen() {
   const { signOut } = useAuth();
 
   const handleSignOut = async () => {
+    if (SKIP_AUTH) {
+      // In MVP mode, do nothing or navigate to onboarding
+      console.log("Sign out disabled in MVP mode");
+      return;
+    }
+
     try {
-      await signOut();
+      await signOut?.();
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -174,13 +181,22 @@ export default function ProfileScreen() {
 
         <View style={styles.section}>
           <View style={styles.menuCard}>
-            <ProfileMenuItem
-              icon="logout"
-              title="Cerrar sesión"
-              onPress={handleSignOut}
-              showChevron={false}
-              danger
-            />
+            {SKIP_AUTH ? (
+              <ProfileMenuItem
+                icon="info-outline"
+                title="Modo MVP"
+                subtitle="Auth deshabilitado temporalmente"
+                showChevron={false}
+              />
+            ) : (
+              <ProfileMenuItem
+                icon="logout"
+                title="Cerrar sesión"
+                onPress={handleSignOut}
+                showChevron={false}
+                danger
+              />
+            )}
           </View>
         </View>
       </ScrollView>

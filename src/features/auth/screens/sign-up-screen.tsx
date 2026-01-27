@@ -1,4 +1,3 @@
-import { AUTH_MESSAGES, AUTH_ROUTES } from "../config";
 import { SignUpFormData, useSignUpLogic } from "@/src/features/auth/hooks";
 import { Button, ErrorAlert, FormInput, OrDivider } from "@/src/shared/ui";
 import { theme } from "@/src/theme";
@@ -12,6 +11,8 @@ import {
   Text,
   View,
 } from "react-native";
+import { AUTH_MESSAGES } from "../config";
+import { AUTH_ROUTES } from "../routes";
 
 /**
  * SignUpScreen - User registration view

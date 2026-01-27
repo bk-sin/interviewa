@@ -30,7 +30,8 @@ const { spacing } = theme;
  * @description Main dashboard showing interview stats, quick actions and history
  */
 export default function HomeScreen() {
-  // Sync user with backend once when home loads
+  // Sync user with backend once when home loads (only if auth is enabled)
+  // Call hook unconditionally, but it will be a no-op if SKIP_AUTH is true
   useUserSync();
 
   // Memoized handlers to prevent unnecessary re-renders

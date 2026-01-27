@@ -16,6 +16,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import "react-native-reanimated";
 
+import { SKIP_AUTH } from "@/src/config/auth-bypass.config";
 import { queryClient } from "@/src/config/tanstack.config";
 import { preloadImages } from "@/src/lib/assets";
 import { theme } from "@/src/theme";
@@ -35,7 +36,7 @@ export const unstable_settings = {
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
-if (!publishableKey) {
+if (!SKIP_AUTH && !publishableKey) {
   throw new Error(
     "Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env",
   );
@@ -100,52 +101,60 @@ export default function RootLayout() {
     );
   }
 
+  const appContent = (
+    <ThemeProvider value={navigationTheme}>
+      <View style={{ flex: 1, backgroundColor }}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor },
+            animation: "fade",
+          }}
+        >
+          <Stack.Screen
+            name="onboarding"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+            }}
+          />
+          <Stack.Screen
+            name="(auth)"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+            }}
+          />
+          <Stack.Screen
+            name="(tabs)"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+            }}
+          />
+          <Stack.Screen
+            name="interview"
+            options={{
+              headerShown: false,
+              gestureEnabled: true,
+              animation: "slide_from_right",
+            }}
+          />
+        </Stack>
+        <StatusBar style="light" />
+      </View>
+    </ThemeProvider>
+  );
+
   return (
     <QueryClientProvider client={queryClient}>
-      <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-        <ThemeProvider value={navigationTheme}>
-          <View style={{ flex: 1, backgroundColor }}>
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                contentStyle: { backgroundColor },
-                animation: "fade",
-              }}
-            >
-              <Stack.Screen
-                name="onboarding"
-                options={{
-                  headerShown: false,
-                  gestureEnabled: false,
-                }}
-              />
-              <Stack.Screen
-                name="(auth)"
-                options={{
-                  headerShown: false,
-                  gestureEnabled: false,
-                }}
-              />
-              <Stack.Screen
-                name="(tabs)"
-                options={{
-                  headerShown: false,
-                  gestureEnabled: false,
-                }}
-              />
-              <Stack.Screen
-                name="interview"
-                options={{
-                  headerShown: false,
-                  gestureEnabled: true,
-                  animation: "slide_from_right",
-                }}
-              />
-            </Stack>
-            <StatusBar style="light" />
-          </View>
-        </ThemeProvider>
-      </ClerkProvider>
+      {SKIP_AUTH ? (
+        appContent
+      ) : (
+        <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+          {appContent}
+        </ClerkProvider>
+      )}
     </QueryClientProvider>
   );
 }

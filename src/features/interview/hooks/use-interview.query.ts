@@ -7,7 +7,7 @@ import type {
   InterviewSessionResponse,
   InterviewState as InterviewStateType,
   ProgressMetric,
-} from "@/src/types";
+} from "../types";
 
 /**
  * Query Keys para interview

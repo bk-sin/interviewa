@@ -3,8 +3,10 @@
  * Simpler approach: just sync once when home loads
  */
 
-import { useAuth, useUser } from "@clerk/clerk-expo";
 import { useEffect, useRef } from "react";
+
+import { SKIP_AUTH } from "@/src/config/auth-bypass.config";
+import { useAuth, useUser } from "@/src/shared/hooks";
 import { syncUser } from "../services";
 
 /**
@@ -17,6 +19,11 @@ export function useUserSync() {
   const hasSynced = useRef(false);
 
   useEffect(() => {
+    // Skip sync if auth is bypassed
+    if (SKIP_AUTH) {
+      return;
+    }
+
     // Only sync if:
     // 1. User is signed in
     // 2. User data is loaded
