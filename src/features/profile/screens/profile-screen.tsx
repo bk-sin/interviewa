@@ -1,205 +1,162 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
-  SafeAreaView,
+  Animated,
+  Platform,
   ScrollView,
+  StatusBar,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { SKIP_AUTH } from "@/src/config/auth-bypass.config";
-import { Text } from "@/src/shared/components";
-import { useAuth, useUser } from "@/src/shared/hooks";
-import { theme } from "@/src/theme";
+import { ThemedText } from "@/src/shared/components";
+import { colors, spacing } from "@/src/theme";
 
-const { borderRadius, colors, shadows, spacing, typography } = theme;
+/**
+ * Pulsing Dot Component
+ * @description Animated dot with pulsing effect
+ */
+const PulsingDot = () => {
+  const opacity = useRef(new Animated.Value(1)).current;
 
-interface ProfileMenuItemProps {
-  icon: keyof typeof MaterialIcons.glyphMap;
-  title: string;
-  subtitle?: string;
-  onPress?: () => void;
-  showChevron?: boolean;
-  danger?: boolean;
-}
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 0.3,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+  }, []);
 
-function ProfileMenuItem({
-  icon,
-  title,
-  subtitle,
-  onPress,
-  showChevron = true,
-  danger = false,
-}: ProfileMenuItemProps) {
-  return (
-    <TouchableOpacity
-      style={styles.menuItem}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <View style={styles.menuItemLeft}>
-        <View
-          style={[
-            styles.menuIconBox,
-            danger && { backgroundColor: theme.rgba(colors.status.error, 0.1) },
-          ]}
-        >
-          <MaterialIcons
-            name={icon}
-            size={22}
-            color={danger ? colors.status.error : colors.primary}
-          />
-        </View>
-        <View>
-          <Text
-            style={[
-              typography.body,
-              styles.menuTitle,
-              danger && { color: colors.status.error },
-            ]}
-          >
-            {title}
-          </Text>
-          {subtitle && (
-            <Text style={[typography.caption, styles.menuSubtitle]}>
-              {subtitle}
-            </Text>
-          )}
+  return <Animated.View style={[styles.dot, { opacity }]} />;
+};
+
+/**
+ * Header Component
+ */
+const Header = () => (
+  <View style={styles.header}>
+    <ThemedText style={styles.headerTitle}>Estado de Uso</ThemedText>
+    <TouchableOpacity style={styles.settingsButton}>
+      <MaterialIcons name="settings" size={20} color={colors.primary.main} />
+    </TouchableOpacity>
+  </View>
+);
+
+/**
+ * Premium Card Component
+ */
+const PremiumCard = () => (
+  <View style={styles.premiumCardContainer}>
+    <View style={styles.premiumCardInner}>
+      <View style={styles.planBadge}>
+        <PulsingDot />
+        <ThemedText style={styles.planText}>PLAN ACTUAL</ThemedText>
+      </View>
+
+      <ThemedText style={styles.statsTitle}>
+        🎤 1 <ThemedText style={{ color: colors.primary.main }}>/</ThemedText> 1
+      </ThemedText>
+      <ThemedText style={styles.statsSubtitle}>Entrevistas usadas</ThemedText>
+
+      <View style={styles.progressTrack}>
+        <View style={styles.progressFill} />
+      </View>
+
+      <ThemedText style={styles.limitText}>Límite semanal alcanzado</ThemedText>
+    </View>
+  </View>
+);
+
+/**
+ * Last Result Card Component
+ */
+const LastResultCard = () => (
+  <View style={styles.sectionContainer}>
+    <View style={styles.sectionHeader}>
+      <ThemedText style={styles.sectionLabel}>ÚLTIMO RESULTADO</ThemedText>
+      <ThemedText style={styles.dateLabel}>12 Ene</ThemedText>
+    </View>
+
+    <View style={styles.resultCard}>
+      <View style={styles.resultRow}>
+        <View style={styles.resultDot} />
+        <View style={styles.resultContent}>
+          <ThemedText style={styles.resultTitle}>
+            Tu foco:{" "}
+            <ThemedText style={{ color: colors.primary.main }}>
+              Empieza con una frase-resumen
+            </ThemedText>
+          </ThemedText>
+          <ThemedText style={styles.resultDescription}>
+            Tus respuestas son sólidas, pero falta estructura inicial para guiar
+            al reclutador durante los primeros segundos.
+          </ThemedText>
         </View>
       </View>
-      {showChevron && (
-        <MaterialIcons
-          name="chevron-right"
-          size={24}
-          color={colors.text.muted}
-        />
-      )}
+    </View>
+  </View>
+);
+
+/**
+ * Upgrade Section Component
+ */
+const UpgradeSection = () => (
+  <View style={styles.upgradeContainer}>
+    <TouchableOpacity activeOpacity={1} style={styles.lockedButton}>
+      <MaterialIcons name="lock" size={20} color={colors.text.tertiary} />
+      <ThemedText style={styles.lockedButtonText}>
+        Desbloquear más entrevistas
+      </ThemedText>
     </TouchableOpacity>
-  );
-}
 
+    <ThemedText style={styles.comingSoonText}>
+      INTERVIEWA PRO · PRÓXIMAMENTE
+    </ThemedText>
+  </View>
+);
+
+/**
+ * ProfileScreen
+ * @description User profile screen with usage stats and upgrade options
+ */
 export default function ProfileScreen() {
-  const { user } = useUser();
-  const { signOut } = useAuth();
-
-  const handleSignOut = async () => {
-    if (SKIP_AUTH) {
-      // In MVP mode, do nothing or navigate to onboarding
-      console.log("Sign out disabled in MVP mode");
-      return;
-    }
-
-    try {
-      await signOut?.();
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.header}>
-          <View style={styles.avatarContainer}>
-            {user?.imageUrl ? (
-              <View style={styles.avatar}>
-                <MaterialIcons
-                  name="person"
-                  size={48}
-                  color={colors.text.primary}
-                />
-              </View>
-            ) : (
-              <View style={styles.avatar}>
-                <MaterialIcons
-                  name="person"
-                  size={48}
-                  color={colors.text.primary}
-                />
-              </View>
-            )}
-          </View>
-          <Text style={[typography.h3, styles.userName]}>
-            {user?.firstName || "Usuario"}
-          </Text>
-          <Text style={[typography.bodySmall, styles.userEmail]}>
-            {user?.primaryEmailAddress?.emailAddress || ""}
-          </Text>
-        </View>
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor={colors.background.dark}
+      />
 
-        <View style={styles.section}>
-          <Text style={[typography.caption, styles.sectionTitle]}>CUENTA</Text>
-          <View style={styles.menuCard}>
-            <ProfileMenuItem
-              icon="person-outline"
-              title="Editar perfil"
-              subtitle="Nombre, foto, información"
-            />
-            <ProfileMenuItem
-              icon="notifications-none"
-              title="Notificaciones"
-              subtitle="Preferencias de alertas"
-            />
-            <ProfileMenuItem
-              icon="security"
-              title="Seguridad"
-              subtitle="Contraseña, 2FA"
-            />
-          </View>
-        </View>
+      <View style={styles.contentContainer}>
+        <Header />
 
-        <View style={styles.section}>
-          <Text style={[typography.caption, styles.sectionTitle]}>
-            PREFERENCIAS
-          </Text>
-          <View style={styles.menuCard}>
-            <ProfileMenuItem
-              icon="language"
-              title="Idioma"
-              subtitle="Español"
-            />
-            <ProfileMenuItem
-              icon="palette"
-              title="Apariencia"
-              subtitle="Tema oscuro"
-            />
-          </View>
-        </View>
+        <ScrollView
+          contentContainerStyle={styles.scrollPadding}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.spacerTop} />
+          <PremiumCard />
+          <LastResultCard />
+          <UpgradeSection />
 
-        <View style={styles.section}>
-          <Text style={[typography.caption, styles.sectionTitle]}>SOPORTE</Text>
-          <View style={styles.menuCard}>
-            <ProfileMenuItem icon="help-outline" title="Centro de ayuda" />
-            <ProfileMenuItem icon="feedback" title="Enviar feedback" />
-            <ProfileMenuItem icon="info-outline" title="Acerca de" />
+          <View style={styles.footerQuote}>
+            <ThemedText style={styles.quoteText}>
+              "Las buenas entrevistas no se improvisan. Se entrenan."
+            </ThemedText>
           </View>
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.menuCard}>
-            {SKIP_AUTH ? (
-              <ProfileMenuItem
-                icon="info-outline"
-                title="Modo MVP"
-                subtitle="Auth deshabilitado temporalmente"
-                showChevron={false}
-              />
-            ) : (
-              <ProfileMenuItem
-                icon="logout"
-                title="Cerrar sesión"
-                onPress={handleSignOut}
-                showChevron={false}
-                danger
-              />
-            )}
-          </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -209,74 +166,215 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background.dark,
   },
-  scrollContent: {
-    paddingBottom: 100,
+  contentContainer: {
+    flex: 1,
   },
+  scrollPadding: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: 130,
+  },
+  spacerTop: {
+    height: 10,
+  },
+  // Header
   header: {
-    alignItems: "center",
-    paddingVertical: spacing.xl,
-    paddingHorizontal: spacing.base,
-  },
-  avatarContainer: {
-    marginBottom: spacing.md,
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: colors.background.card,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  userName: {
-    color: colors.text.primary,
-    marginBottom: spacing.xs,
-  },
-  userEmail: {
-    color: colors.text.muted,
-  },
-  section: {
-    paddingHorizontal: spacing.base,
-    marginBottom: spacing.lg,
-  },
-  sectionTitle: {
-    color: colors.text.muted,
-    marginBottom: spacing.sm,
-    marginLeft: spacing.sm,
-  },
-  menuCard: {
-    backgroundColor: colors.background.card,
-    borderRadius: borderRadius.lg,
-    overflow: "hidden",
-    ...shadows.sm,
-  },
-  menuItem: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.base,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.rgba(colors.border.dark, 0.3),
+    alignItems: "center",
+    paddingHorizontal: spacing.lg,
+    paddingTop: Platform.OS === "android" ? 20 : 10,
+    paddingBottom: spacing.lg,
   },
-  menuItemLeft: {
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.text.primary,
+    letterSpacing: 0.5,
+  },
+  settingsButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.background.accent,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.border.light,
+  },
+  // Premium Card
+  premiumCardContainer: {
+    marginTop: 10,
+    borderRadius: 24,
+    backgroundColor: colors.border.light,
+    padding: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.4,
+    shadowRadius: 40,
+    elevation: 10,
+  },
+  premiumCardInner: {
+    backgroundColor: colors.background.light,
+    borderRadius: 23,
+    padding: spacing.xl,
+    alignItems: "center",
+  },
+  planBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.md,
+    marginBottom: spacing.md,
+    gap: spacing.sm,
   },
-  menuIconBox: {
-    width: 40,
-    height: 40,
-    borderRadius: borderRadius.base,
-    backgroundColor: colors.primaryMuted,
-    justifyContent: "center",
-    alignItems: "center",
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.primary.main,
   },
-  menuTitle: {
+  planText: {
+    fontSize: 10,
+    fontWeight: "bold",
+    color: colors.primary.main,
+    letterSpacing: 2,
+  },
+  statsTitle: {
+    fontSize: 32,
+    fontWeight: "900",
     color: colors.text.primary,
+    textAlign: "center",
+    letterSpacing: -0.5,
+  },
+  statsSubtitle: {
+    marginTop: spacing.sm,
+    fontSize: 15,
+    fontWeight: "500",
+    color: colors.text.primary,
+    textAlign: "center",
+  },
+  progressTrack: {
+    marginTop: spacing.lg,
+    width: "100%",
+    height: 6,
+    backgroundColor: colors.background.dark,
+    borderRadius: 3,
+    overflow: "hidden",
+  },
+  progressFill: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: colors.primary.main,
+    shadowColor: colors.primary.main,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  limitText: {
+    marginTop: spacing.md,
+    fontSize: 12,
+    color: colors.text.secondary,
     fontWeight: "500",
   },
-  menuSubtitle: {
-    color: colors.text.muted,
+  // Last Result Section
+  sectionContainer: {
+    marginTop: spacing.xl,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: spacing.md,
+    paddingHorizontal: 4,
+  },
+  sectionLabel: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: colors.text.secondary,
+    letterSpacing: 1.5,
+  },
+  dateLabel: {
+    fontSize: 11,
+    fontWeight: "500",
+    color: colors.text.tertiary,
+  },
+  resultCard: {
+    backgroundColor: colors.background.light,
+    borderRadius: 16,
+    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.border.dark,
+  },
+  resultRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: spacing.sm,
+  },
+  resultDot: {
+    marginTop: 6,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.primary.main,
+  },
+  resultContent: {
+    flex: 1,
+  },
+  resultTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: colors.text.primary,
+    lineHeight: 22,
+    marginBottom: spacing.sm,
+  },
+  resultDescription: {
+    fontSize: 13,
+    color: colors.text.secondary,
+    lineHeight: 20,
+  },
+  // Upgrade Section
+  upgradeContainer: {
+    marginTop: 40,
+  },
+  lockedButton: {
+    width: "100%",
+    height: 56,
+    backgroundColor: colors.background.accent,
+    borderRadius: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border.dark,
+    opacity: 0.8,
+  },
+  lockedButtonText: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: colors.text.tertiary,
+  },
+  comingSoonText: {
+    marginTop: spacing.sm,
+    textAlign: "center",
+    fontSize: 10,
+    fontWeight: "600",
+    color: colors.text.tertiary,
+    letterSpacing: 2,
+    textTransform: "uppercase",
+  },
+  // Footer
+  footerQuote: {
+    marginTop: spacing.xl,
+    marginBottom: spacing.md,
+    alignItems: "center",
+  },
+  quoteText: {
+    fontSize: 14,
+    fontWeight: "500",
+    fontStyle: "italic",
+    color: colors.text.tertiary,
+    textAlign: "center",
+    maxWidth: 220,
+    lineHeight: 22,
   },
 });

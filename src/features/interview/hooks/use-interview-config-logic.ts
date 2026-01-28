@@ -1,12 +1,12 @@
-import { DEFAULT_INTERVIEW_CONFIG } from "@/src/config";
+import * as Haptics from "expo-haptics";
+import { router } from "expo-router";
+import { useCallback, useState } from "react";
+import { DEFAULT_INTERVIEW_CONFIG } from "../config";
 import type {
   DifficultyLevel,
   InterviewConfigData,
   QuestionCount,
-} from "@/src/types";
-import * as Haptics from "expo-haptics";
-import { router } from "expo-router";
-import { useCallback, useState } from "react";
+} from "../types";
 
 interface UseInterviewConfigLogicProps {
   readonly onNext: (data: InterviewConfigData) => void;
@@ -51,7 +51,7 @@ export function useInterviewConfigLogic({
         },
       }));
     },
-    []
+    [],
   );
 
   // Handler para cambiar rol (placeholder)
@@ -65,7 +65,7 @@ export function useInterviewConfigLogic({
   const handleSubmit = useCallback(() => {
     // Validar que al menos 1 área esté seleccionada
     const hasAtLeastOneArea = Object.values(config.focusAreas).some(
-      (value) => value
+      (value) => value,
     );
 
     if (!hasAtLeastOneArea) {

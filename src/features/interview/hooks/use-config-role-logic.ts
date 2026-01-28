@@ -1,7 +1,7 @@
 import * as Haptics from "expo-haptics";
 import { useCallback, useMemo, useState } from "react";
 
-import { DEFAULT_ROLE_ID, ROLES_DATA } from "@/src/config";
+import { DEFAULT_ROLE_ID, ROLES_DATA } from "../config";
 
 interface UseConfigRoleLogicProps {
   readonly onNext: (roleId: string) => void;
@@ -19,7 +19,7 @@ export function useConfigRoleLogic({
   initialRoleId,
 }: UseConfigRoleLogicProps) {
   const [selectedRole, setSelectedRole] = useState<string | null>(
-    initialRoleId || DEFAULT_ROLE_ID
+    initialRoleId || DEFAULT_ROLE_ID,
   );
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -31,7 +31,7 @@ export function useConfigRoleLogic({
     return ROLES_DATA.filter(
       (role) =>
         role.title.toLowerCase().includes(lowerQuery) ||
-        role.subtitle.toLowerCase().includes(lowerQuery)
+        role.subtitle.toLowerCase().includes(lowerQuery),
     );
   }, [searchQuery]);
 
@@ -43,7 +43,7 @@ export function useConfigRoleLogic({
         setSelectedRole(id);
       }
     },
-    [selectedRole]
+    [selectedRole],
   );
 
   // Manejo de Confirmación

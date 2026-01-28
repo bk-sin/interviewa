@@ -12,8 +12,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemedText, ThemedView } from "@/src/shared/components";
 import { Button } from "@/src/shared/ui";
 import { colors, rgba, spacing, typography } from "@/src/theme";
-import type { RoleOption } from "@/src/types";
 import { useConfigRoleLogic } from "../hooks";
+import type { RoleOption } from "../types";
 
 interface RoleCardProps {
   readonly item: RoleOption;
@@ -114,8 +114,8 @@ export default function ConfigRoleScreen() {
   });
 
   // Separar roles por categoría
-  const suggestedRoles = filteredRoles.filter(
-    (r) => r.category === "suggested"
+  const suggestedRoles: RoleOption[] = filteredRoles.filter(
+    (r) => r.category === "suggested",
   );
   const otherRoles = filteredRoles.filter((r) => r.category === "others");
 

@@ -8,25 +8,21 @@ import {
   ViewStyle,
 } from "react-native";
 
+import { ThemedText } from "@/src/shared/components";
+import { colors, rgba, spacing, typography } from "@/src/theme";
 import {
   DIFFICULTY_OPTIONS,
   FOCUS_AREAS,
   QUESTION_COUNT_OPTIONS,
-} from "@/src/config";
-import { ThemedText } from "@/src/shared/components";
-import { colors, rgba, spacing, typography } from "@/src/theme";
-import type {
-  DifficultyLevel,
-  InterviewConfigData,
-  QuestionCount,
-} from "@/src/types";
+} from "../config";
+import { DifficultyLevel, InterviewConfigData, QuestionCount } from "../types";
 
 interface InterviewConfigFormProps {
   readonly config: InterviewConfigData;
   readonly onDifficultyChange: (level: DifficultyLevel) => void;
   readonly onCountChange: (count: QuestionCount) => void;
   readonly onFocusAreaToggle: (
-    area: keyof InterviewConfigData["focusAreas"]
+    area: keyof InterviewConfigData["focusAreas"],
   ) => void;
   readonly onRoleChange: () => void;
   readonly onSubmit: () => void;
@@ -245,7 +241,7 @@ export const ConfigForm = React.memo<InterviewConfigFormProps>(
         </TouchableOpacity>
       </ScrollView>
     );
-  }
+  },
 );
 
 ConfigForm.displayName = "InterviewConfigForm";
